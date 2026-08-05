@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin @Elrojo.3d</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+    <!-- ===== LOGIN ===== -->
+    <div id="vista-login" class="vista" hidden>
+
+        <div class="card auth-card">
+
+            <h1>@Elrojo.3d</h1>
+            <p class="sub">Panel de administración</p>
+
+            <div id="login-error" class="error" hidden></div>
+
+            <form id="form-login">
+                <label>Correo</label>
+                <input type="email" id="login-email" required placeholder="admin@elrojo3d.com">
+                <label>Contraseña</label>
+                <input type="password" id="login-pass" required placeholder="••••••••">
+                <button type="submit" class="btn primary">Entrar</button>
+            </form>
+
+            <p class="toggle-auth">
+                ¿No tienes cuenta? <button type="button" class="link" id="btn-modo-registro">Crear cuenta</button>
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===== DASHBOARD ===== -->
+    <div id="vista-dash" class="vista" hidden>
+
+        <header class="dash-head">
+            <h2>Panel de administración</h2>
+            <button class="btn ghost" id="btn-salir">Cerrar sesión</button>
+        </header>
+
+        <main class="dash-body">
+
+            <section class="card panel">
+
+                <div class="panel-head">
+                    <h3>Categorías</h3>
+                </div>
+
+                <form id="form-categoria" class="row">
+                    <input type="text" id="cat-nombre" placeholder="Nombre (ej. Accesorios)" required>
+                    <button type="submit" class="btn primary">Agregar</button>
+                </form>
+
+                <ul id="lista-categorias" class="chips"></ul>
+
+            </section>
+
+            <section class="card panel">
+
+                <div class="panel-head">
+                    <h3>Productos</h3>
+                    <button class="btn primary" id="btn-nuevo-producto">+ Nuevo producto</button>
+                </div>
+
+                <div id="lista-productos" class="tabla-wrap"></div>
+
+            </section>
+
+            <section class="card panel">
+
+                <div class="panel-head">
+                    <h3>WhatsApp</h3>
+                </div>
+
+                <form id="form-config" class="row">
+                    <input type="tel" id="cfg-whatsapp" placeholder="573001234567">
+                    <button type="submit" class="btn primary">Guardar</button>
+                </form>
+                <p class="hint">Número en formato internacional, sin "+". Las ventas "Comprar" y las cotizaciones llegan aquí por WhatsApp.</p>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- ===== FORM PRODUCTO ===== -->
+    <div id="vista-form" class="vista" hidden>
+
+        <header class="dash-head">
+            <h2 id="form-titulo">Nuevo producto</h2>
+            <button class="btn ghost" id="btn-cancelar">Cancelar</button>
+        </header>
+
+        <main class="dash-body">
+
+            <form id="form-producto" class="card panel form-producto">
+
+                <div class="campo">
+                    <label>Nombre *</label>
+                    <input type="text" id="p-nombre" required>
+                </div>
+
+                <div class="campo">
+                    <label>Slug (id del producto) *</label>
+                    <input type="text" id="p-slug" required>
+                </div>
+
+                <div class="dos-col">
+                    <div class="campo">
+                        <label>Categoría</label>
+                        <select id="p-categoria"></select>
+                    </div>
+                    <div class="campo">
+                        <label>Precio (COP)</label>
+                        <input type="number" id="p-precio" min="0" step="100">
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label>Descripción corta (en la tarjeta)</label>
+                    <input type="text" id="p-desc-corta">
+                </div>
+
+                <div class="campo">
+                    <label>Descripción (en el modal)</label>
+                    <textarea id="p-desc" rows="3"></textarea>
+                </div>
+
+                <div class="campo">
+                    <label>Características (una por línea)</label>
+                    <textarea id="p-feats" rows="4" placeholder="PLA reforzado&#10;Colores personalizables"></textarea>
+                </div>
+
+                <div class="campo">
+                    <label>Imagen</label>
+                    <div class="img-upload">
+                        <img id="p-img-preview" alt="Vista previa" hidden>
+                        <input type="file" id="p-imagen" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+                    </div>
+                </div>
+
+                <label class="check">
+                    <input type="checkbox" id="p-disponible" checked> Disponible en la página
+                </label>
+
+                <button type="submit" class="btn primary" id="btn-guardar">Guardar producto</button>
+
+            </form>
+
+        </main>
+
+    </div>
+
+
+    <div id="toast" class="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+{
+  "categorias": [
+    { "id": "todos", "nombre": "Todos" },
+    { "id": "accesorios", "nombre": "Accesorios" },
+    { "id": "personalizados", "nombre": "Personalizados" },
+    { "id": "identificacion", "nombre": "Identificación" }
+  ],
+  "productos": [
+    {
+      "id": "soporte-casco",
+      "nombre": "Soporte para casco",
+      "desc": "Soporte resistente impreso en 3D, diseñado especialmente para motociclistas. Fija tu casco de forma segura y con estilo.",
+      "descCorta": "Diseñado especialmente para motociclistas.",
+      "precio": 15000,
+      "img": "images/products/soporte-casco.png",
+      "categoria": "accesorios",
+      "disponible": true,
+      "feats": [
+        "PLA reforzado y duradero",
+        "Instalación sin herramientas",
+        "Colores personalizables",
+        "Garantía de fabricación"
+      ]
+    },
+    {
+      "id": "llaveros",
+      "nombre": "Llaveros personalizados",
+      "desc": "Llaveros 100% personalizados con tus colores y texto favoritos. El detalle perfecto para tu moto o tus llaves.",
+      "descCorta": "100% personalizados con tus colores favoritos.",
+      "precio": 6000,
+      "img": "images/products/llaveros.png",
+      "categoria": "personalizados",
+      "disponible": true,
+      "feats": [
+        "Diseño a tu gusto",
+        "Colores a elección",
+        "Ligero y resistente",
+        "Ideal para regalo"
+      ]
+    },
+    {
+      "id": "placas",
+      "nombre": "Placas personalizadas",
+      "desc": "Placas únicas con diseños exclusivos para motos y vehículos. Dale identidad a tu máquina.",
+      "descCorta": "Diseños únicos para motos y vehículos.",
+      "precio": 12000,
+      "img": "images/products/placas.png",
+      "categoria": "identificacion",
+      "disponible": true,
+      "feats": [
+        "Texto y colores personalizados",
+        "Material resistente a la intemperie",
+        "Diseños exclusivos",
+        "Adhesivo o tornillos incluidos"
+      ]
+    }
+  ]
+}
