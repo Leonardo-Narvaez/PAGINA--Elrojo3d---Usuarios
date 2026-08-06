@@ -19,44 +19,11 @@ console.log("PANEL ELROJO 3D iniciado.");
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
 
-    const MAX_IMG = 1400;
+    const IMG_OK = /\.(png|jpg|jpeg|svg)$/i;
+    const esImagenOk = (f) => IMG_OK.test(f.name) || /^image\/(png|jpeg|svg\+xml)$/.test(f.type || "");
 
-    async function prepararImagen(file) {
-        if (!file || !file.type.startsWith("image/") || file.type === "image/svg+xml") return file;
-
-        const leer = (f) => new Promise((res, rej) => {
-            const r = new FileReader();
-            r.onload = () => res(r.result);
-            r.onerror = rej;
-            r.readAsDataURL(f);
-        });
-
-        const cargar = (src) => new Promise((res, rej) => {
-            const i = new Image();
-            i.onload = () => res(i);
-            i.onerror = rej;
-            i.src = src;
-        });
-
-        try {
-            const img = await cargar(await leer(file));
-            const escala = Math.min(1, MAX_IMG / Math.max(img.width, img.height));
-            if (escala >= 1) return file;
-
-            const w = Math.round(img.width * escala);
-            const h = Math.round(img.height * escala);
-            const canvas = document.createElement("canvas");
-            canvas.width = w;
-            canvas.height = h;
-            canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-
-            const esPng = file.type === "image/png";
-            const blob = await new Promise(res => canvas.toBlob(res, esPng ? "image/png" : "image/jpeg", 0.85));
-            const nombre = file.name.replace(/\.[^.]+$/, esPng ? ".png" : ".jpg");
-            return new File([blob], nombre, { type: blob.type });
-        } catch (e) {
-            return file;
-        }
+    function prepararImagen(file) {
+        return esImagenOk(file) ? file : null;
     }
 
     let sb = null;
@@ -341,6 +308,11 @@ console.log("PANEL ELROJO 3D iniciado.");
     $("#p-imagen").addEventListener("change", (e) => {
         const f = e.target.files[0];
         if (!f) return;
+        if (!prepararImagen(f)) {
+            alert("Archivo no soportado. Sube una imagen en formato PNG, JPG o SVG.");
+            e.target.value = "";
+            return;
+        }
         const reader = new FileReader();
         reader.onload = (ev) => { $("#p-img-preview").src = ev.target.result; $("#p-img-preview").hidden = false; };
         reader.readAsDataURL(f);
@@ -358,7 +330,11 @@ console.log("PANEL ELROJO 3D iniciado.");
         let img = (editando && editando.img) || "";
         const file = $("#p-imagen").files[0];
         if (file) {
-            const archivo = await prepararImagen(file);
+            const archivo = prepararImagen(file);
+            if (!archivo) {
+                toast("Formato no soportado. Usa PNG, JPG o SVG.", false);
+                return;
+            }
             const ext = archivo.name.split(".").pop().toLowerCase();
             const ruta = slug + "." + ext;
             const { error: upErr } = await sb.storage.from("productos").upload(ruta, archivo, { upsert: true });

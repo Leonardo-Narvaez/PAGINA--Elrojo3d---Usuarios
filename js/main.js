@@ -212,6 +212,7 @@ console.log("ELROJO STUDIO iniciado correctamente.");
 
         if (!list.length) {
             cont.innerHTML = '<div class="cards-empty">No se encontraron productos.</div>';
+            configurarCarrusel();
             observarReveal();
             return;
         }
@@ -233,7 +234,44 @@ console.log("ELROJO STUDIO iniciado correctamente.");
             </div>
         `).join("");
 
+        configurarCarrusel();
         observarReveal();
+    }
+
+    /* ===== CARRUSEL DE PRODUCTOS ===== */
+    let carruselViewport = null;
+
+    function actualizarBotonesCarrusel() {
+        const vp = carruselViewport;
+        if (!vp) return;
+        const wrap = vp.closest(".carousel-wrap");
+        if (!wrap) return;
+        const prev = wrap.querySelector("[data-carousel='prev']");
+        const next = wrap.querySelector("[data-carousel='next']");
+        const max = vp.scrollWidth - vp.clientWidth - 2;
+        prev.disabled = vp.scrollLeft <= 2;
+        next.disabled = vp.scrollLeft >= max;
+    }
+
+    function configurarCarrusel() {
+        carruselViewport = $("#cards-container");
+        const wrap = carruselViewport ? carruselViewport.closest(".carousel-wrap") : null;
+        if (!carruselViewport || !wrap) return;
+
+        const prev = wrap.querySelector("[data-carousel='prev']");
+        const next = wrap.querySelector("[data-carousel='next']");
+
+        carruselViewport.scrollLeft = 0;
+
+        const mover = (dir) => carruselViewport.scrollBy({
+            left: dir * Math.max(carruselViewport.clientWidth * 0.85, 300),
+            behavior: "smooth"
+        });
+
+        prev.onclick = () => mover(-1);
+        next.onclick = () => mover(1);
+        carruselViewport.onscroll = actualizarBotonesCarrusel;
+        actualizarBotonesCarrusel();
     }
 
     document.addEventListener("click", (e) => {
@@ -430,6 +468,8 @@ console.log("ELROJO STUDIO iniciado correctamente.");
         renderFiltros();
         renderTarjetas();
         llenarPersonalizador();
+
+        window.addEventListener("resize", actualizarBotonesCarrusel);
 
         actualizarPreview();
         actualizarPrecio();

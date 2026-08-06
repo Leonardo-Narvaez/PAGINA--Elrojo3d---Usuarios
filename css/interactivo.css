@@ -102,7 +102,7 @@ font-size:.9rem;
 }
 
 .modal-feats li::before{
-content:"âœ”";
+content:"✔";
 color:#ff3131;
 font-weight:700;
 }
@@ -245,6 +245,10 @@ flex-direction:column;
 align-items:stretch;
 }
 
+#header-logo img{
+height:46px;
+}
+
 .buscar{
 max-width:none;
 width:100%;
@@ -252,6 +256,8 @@ width:100%;
 
 .filtro-categorias{
 justify-content:center;
+}
+
 }
 
 /* ============ FOOTER ============ */
@@ -288,9 +294,9 @@ width:90%;
 #header-logo img{
 
 display:block;
-height:44px;
+height:56px;
 width:auto;
-max-width:200px;
+max-width:220px;
 object-fit:contain;
 
 }

@@ -19,8 +19,6 @@ min-height:100vh;
 display:none !important;
 }
 
-.hidden{display:none !important;}
-
 /* ===== LOGIN ===== */
 
 #vista-login{
@@ -33,6 +31,13 @@ padding:20px;
 .auth-card{
 width:100%;
 max-width:400px;
+}
+
+.auth-logo{
+display:block;
+width:min(180px, 60%);
+height:auto;
+margin:0 auto 16px;
 }
 
 .card{
@@ -130,6 +135,17 @@ justify-content:space-between;
 align-items:center;
 padding:22px 30px;
 border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.dash-acciones{
+display:flex;
+gap:10px;
+align-items:center;
+flex-wrap:wrap;
+}
+
+.dash-acciones a{
+text-decoration:none;
 }
 
 .dash-body{

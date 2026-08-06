@@ -15,6 +15,8 @@
 
         <div class="card auth-card">
 
+            <img src="../images/logo/logo.svg" alt="@Elrojo.3d" class="auth-logo">
+
             <h1>@Elrojo.3d</h1>
             <p class="sub">Panel de administración</p>
 
@@ -32,6 +34,10 @@
                 ¿No tienes cuenta? <button type="button" class="link" id="btn-modo-registro">Crear cuenta</button>
             </p>
 
+            <p class="toggle-auth">
+                <a href="../index.html" class="link">← Volver a la página</a>
+            </p>
+
         </div>
 
     </div>
@@ -42,7 +48,10 @@
 
         <header class="dash-head">
             <h2>Panel de administración</h2>
-            <button class="btn ghost" id="btn-salir">Cerrar sesión</button>
+            <div class="dash-acciones">
+                <a href="../index.html" class="btn ghost">← Volver</a>
+                <button class="btn ghost" id="btn-salir">Cerrar sesión</button>
+            </div>
         </header>
 
         <main class="dash-body">
@@ -162,7 +171,7 @@
                     <label>Imagen</label>
                     <div class="img-upload">
                         <img id="p-img-preview" alt="Vista previa" hidden>
-                        <input type="file" id="p-imagen" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+                        <input type="file" id="p-imagen" accept=".png,.jpg,.jpeg,.svg,image/png,image/jpeg,image/svg+xml">
                     </div>
                 </div>
 

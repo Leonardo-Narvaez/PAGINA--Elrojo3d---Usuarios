@@ -90,17 +90,6 @@ transform:translate(-50%,-50%) scale(1);
 }
 
 
-.loader-content h1{
-
-font-size:4rem;
-letter-spacing:4px;
-
-position:relative;
-z-index:2;
-
-}
-
-
 .loader-logo{
 
 width:min(420px, 64vw);

@@ -215,6 +215,80 @@ gap:30px;
 
 }
 
+.carousel-wrap{
+
+position:relative;
+
+}
+
+.carousel-btn{
+
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+z-index:5;
+width:48px;
+height:48px;
+border-radius:50%;
+border:1px solid rgba(255,255,255,.12);
+background:rgba(19,19,19,.9);
+color:white;
+font-size:1.6rem;
+line-height:1;
+cursor:pointer;
+transition:.2s;
+
+}
+
+.carousel-btn:hover{
+background:#ff3131;
+border-color:#ff3131;
+}
+
+.carousel-btn:disabled{
+opacity:.3;
+cursor:default;
+}
+
+.carousel-btn:disabled:hover{
+background:rgba(19,19,19,.9);
+border-color:rgba(255,255,255,.12);
+}
+
+.carousel-btn.prev{left:-20px;}
+.carousel-btn.next{right:-20px;}
+
+@media(min-width:769px){
+
+.carousel-viewport{
+
+display:flex;
+gap:30px;
+overflow-x:auto;
+scroll-snap-type:x mandatory;
+scrollbar-width:none;
+padding:4px 2px;
+
+}
+
+.carousel-viewport::-webkit-scrollbar{display:none;}
+
+.carousel-viewport .card{
+
+flex:0 0 calc((100% - 60px)/3);
+min-width:0;
+scroll-snap-align:start;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.carousel-btn{display:none;}
+
+}
+
 .card{
 
 background:#131313;
@@ -642,7 +716,7 @@ font-size:2.2rem;
 <div class="container">
 
 <h1>
-Diseñado en Barranquilla.<br>
+Diseñado.<br>
 <span>Impreso capa por capa.</span>
 </h1>
 
@@ -683,7 +757,15 @@ Nuestros Productos
 
 </div>
 
-<div class="cards" id="cards-container"></div>
+<div class="carousel-wrap">
+
+<button type="button" class="carousel-btn prev" data-carousel="prev" aria-label="Productos anteriores">‹</button>
+
+<div class="cards carousel-viewport" id="cards-container"></div>
+
+<button type="button" class="carousel-btn next" data-carousel="next" aria-label="Productos siguientes">›</button>
+
+</div>
 
 </div>
 
@@ -832,7 +914,7 @@ Lo que dicen nuestros clientes
 
 <p>
 
-Hecho en Barranquilla, Colombia.
+Barranquilla - Colombia.
 
 </p>
 
