@@ -3,6 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="@Elrojo.3d — Impresión 3D personalizada en Barranquilla. Placas, llaveros y accesorios para tu moto, hechos a tu medida y enviados a todo Colombia.">
+<meta name="theme-color" content="#ff3131">
+<link rel="icon" type="image/svg+xml" href="images/logo/logo.svg">
+
+<!-- Tarjeta de compartir (WhatsApp / Instagram / Facebook) -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CO">
+<meta property="og:site_name" content="@Elrojo.3d">
+<meta property="og:title" content="@Elrojo.3d | Impresión 3D personalizada">
+<meta property="og:description" content="Placas, llaveros y accesorios para tu moto, impresos en 3D a tu medida. Pide tu cotización por WhatsApp.">
+<meta property="og:image" content="https://TU-DOMINIO.com/images/og-image.png">
+<meta property="og:url" content="https://TU-DOMINIO.com/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="@Elrojo.3d | Impresión 3D personalizada">
+<meta name="twitter:description" content="Placas, llaveros y accesorios para tu moto, impresos en 3D a tu medida.">
+<meta name="twitter:image" content="https://TU-DOMINIO.com/images/og-image.png">
+<!-- Importante: cuando publiques la página, cambia TU-DOMINIO.com por la URL real -->
+
 <link rel="stylesheet" href="css/loader.css">
 <link rel="stylesheet" href="css/interactivo.css">
 
@@ -323,24 +341,9 @@ overflow:hidden;
 .preview img{
 
 width:100%;
-height:100%;
-object-fit:cover;
-transition:.4s;
-
-}
-
-.preview-tag{
-
-position:absolute;
-bottom:16px;
-padding:8px 18px;
-background:rgba(0,0,0,.6);
-border:1px solid rgba(255,49,49,.5);
-border-radius:30px;
-font-weight:700;
-font-size:1.1rem;
-letter-spacing:2px;
-color:white;
+ height:100%;
+ object-fit:cover;
+ transition:.4s;
 
 }
 
@@ -376,38 +379,159 @@ input:focus,select:focus{
 outline:1px solid rgba(255,49,49,.6);
 }
 
-/* ESTADO PEDIDO */
+/* DROPDOWN DE COLORES */
 
-.timeline{
+.dropdown{
+position:relative;
+}
+
+.dropdown-btn{
+
+width:100%;
+ padding:15px;
+ border:none;
+ border-radius:12px;
+ background:#202020;
+ color:white;
+ cursor:pointer;
+ display:flex;
+ align-items:center;
+ gap:10px;
+ font-family:'Inter',sans-serif;
+ font-size:1rem;
+ text-align:left;
+
+}
+
+.dropdown-btn:focus{
+outline:1px solid rgba(255,49,49,.6);
+}
+
+.dropdown-ico,
+.dropdown-swatch{
+
+width:18px;
+ height:18px;
+ border-radius:50%;
+ border:1px solid rgba(255,255,255,.35);
+ flex:none;
+
+}
+
+.dropdown-arrow{
+margin-left:auto;
+ color:#999;
+}
+
+.dropdown-list{
+
+list-style:none;
+ margin:0;
+ padding:6px;
+ position:absolute;
+ top:calc(100% + 6px);
+ left:0;
+ right:0;
+ background:#202020;
+ border-radius:12px;
+ max-height:220px;
+ overflow-y:auto;
+ z-index:60;
+
+}
+
+.dropdown-list li{
 
 display:flex;
-justify-content:space-between;
-gap:20px;
-flex-wrap:wrap;
+ align-items:center;
+ gap:10px;
+ padding:10px 12px;
+ border-radius:8px;
+ cursor:pointer;
+ font-size:.95rem;
 
 }
 
-.step{
+.dropdown-list li:hover{
+background:#2c2c2c;
+}
 
-flex:1;
-min-width:200px;
-background:#131313;
-padding:25px;
-border-radius:20px;
-text-align:center;
-transition:.3s;
+.dropdown-list[hidden]{
+display:none;
+}
+
+/* TESTIMONIOS */
+
+.testimonios-grid{
+
+display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+ gap:30px;
 
 }
 
-.step.active{
-border:1px solid rgba(255,49,49,.5);
+.testimonio{
+
+padding:30px;
+ border-radius:25px;
+ background:#131313;
+ border:1px solid rgba(255,255,255,.05);
+ transition:.3s;
+
 }
 
-.icon{
+.testimonio:hover{
 
-font-size:2rem;
-margin-bottom:15px;
-color:#ff3131;
+border-color:rgba(255,49,49,.35);
+ transform:translateY(-6px);
+
+}
+
+.testimonio .stars{
+
+color:#ffd400;
+ font-size:1.15rem;
+ letter-spacing:3px;
+ margin-bottom:15px;
+
+}
+
+.testimonio p{
+
+color:#c9c9c9;
+ line-height:1.7;
+ font-size:.98rem;
+ margin-bottom:20px;
+
+}
+
+.testimonio .autor{
+
+font-weight:700;
+ font-size:1.05rem;
+
+}
+
+.testimonio .detalle{
+
+color:#888;
+ font-size:.85rem;
+ margin-top:4px;
+
+}
+
+.testimonio .avatar{
+
+width:46px;
+ height:46px;
+ border-radius:50%;
+ background:linear-gradient(135deg,#ff3131,#7a1515);
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ font-weight:700;
+ margin-bottom:15px;
+ color:white;
 
 }
 
@@ -501,7 +625,7 @@ font-size:2.2rem;
 <a href="#inicio" class="active">Inicio</a>
 <a href="#productos">Productos</a>
 <a href="#personalizar">Personalizar</a>
-<a href="#pedidos">Pedidos</a>
+<a href="#testimonios">Opiniones</a>
 
 </nav>
 
@@ -583,8 +707,6 @@ Personaliza tu producto
 
 <img src="images/products/llaveros.png" alt="Vista previa" id="preview-img">
 
-<span class="preview-tag" id="preview-tag">ELROJO</span>
-
 </div>
 
 <div class="formulario">
@@ -600,32 +722,23 @@ Personaliza tu producto
 
 <label>Color principal</label>
 <select id="op-color">
-<option value="Negro">Negro</option>
-<option value="Rojo">Rojo</option>
-<option value="Blanco">Blanco</option>
-<option value="Azul">Azul</option>
+<option value="">Elegir</option>
 </select>
 
 </div>
 
-
 <div>
 
 <label>Texto personalizado</label>
-<input type="text" id="op-texto" placeholder="ELROJO XTZ" maxlength="14">
+<input type="text" id="op-texto" placeholder="Tu nombre o frase corta" maxlength="14">
 
 </div>
 
+<div id="campo-color-texto" hidden>
 
-<div>
-
-<label>Tipo de acabado</label>
-
-<select id="op-acabado">
-
-<option value="Mate">Mate</option>
-<option value="Brillante">Brillante</option>
-
+<label>Color del texto</label>
+<select id="op-color-texto">
+<option value="">Elegir</option>
 </select>
 
 </div>
@@ -663,60 +776,53 @@ Solicitar Cotización
 
 
 
-<section class="section" id="pedidos">
+<section class="section" id="testimonios">
 
 <div class="container">
 
 <h2 class="section-title">
 
-Estado de tu pedido
+Lo que dicen nuestros clientes
 
 </h2>
 
-<div class="timeline">
+<div class="testimonios-grid">
 
-<div class="step active">
+<article class="testimonio">
 
-<div class="icon">✔</div>
+<div class="avatar">J</div>
+<div class="stars">★★★★★</div>
+<p>"Pedí una placa personalizada para mi moto y quedó espectacular. El acabado es de primera y llegó antes de lo esperado."</p>
+<div class="autor">Javier M.</div>
+<div class="detalle">Barranquilla • Placa personalizada</div>
 
-Diseño aprobado
+</article>
 
-</div>
+<article class="testimonio">
 
+<div class="avatar">L</div>
+<div class="stars">★★★★★</div>
+<p>"Los llaveros con mi nombre quedaron increíbles. Detalle perfecto para regalar y muy buena calidad."</p>
+<div class="autor">Laura C.</div>
+<div class="detalle">Bogotá • Llaveros personalizados</div>
 
-<div class="step">
+</article>
 
-<div class="icon">🖨</div>
+<article class="testimonio">
 
-En impresión
+<div class="avatar">A</div>
+<div class="stars">★★★★★</div>
+<p>"Muy buena atención, me ayudaron con el diseño y el resultado superó lo que esperaba. Recomendado 100%."</p>
+<div class="autor">Andrés R.</div>
+<div class="detalle">Medellín • Soporte para casco</div>
 
-</div>
-
-
-<div class="step">
-
-<div class="icon">📦</div>
-
-Empacado
-
-</div>
-
-
-<div class="step">
-
-<div class="icon">🏍</div>
-
-Listo para entrega
-
-</div>
+</article>
 
 </div>
 
 </div>
 
 </section>
-
-
 
 <footer>
 

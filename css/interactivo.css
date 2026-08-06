@@ -254,18 +254,6 @@ width:100%;
 justify-content:center;
 }
 
-}
-
-/* ============ TIMELINE PROGRESS ============ */
-
-.step .icon{
-transition:.3s;
-}
-
-.step:hover .icon{
-transform:scale(1.15);
-}
-
 /* ============ FOOTER ============ */
 
 .admin-link{

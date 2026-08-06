@@ -96,6 +96,7 @@ console.log("PANEL ELROJO 3D iniciado.");
             $("#vista-dash").hidden = false;
             cargarCategorias();
             cargarProductos();
+            cargarColores();
             cargarConfiguracion();
         } else {
             $("#vista-login").hidden = false;
@@ -171,6 +172,40 @@ console.log("PANEL ELROJO 3D iniciado.");
         if (error) { toast("Error: " + error.message, false); return; }
         cargarCategorias();
         toast("Categoría eliminada");
+    });
+
+    /* ===== COLORES ===== */
+    async function cargarColores() {
+        const { data } = await sb.from("colores").select("*").order("orden");
+        $("#lista-colores").innerHTML = (data || []).map(c => `
+            <li class="chip">
+                <span class="swatch" style="background:${c.hex}"></span>
+                ${c.nombre}
+                <button type="button" data-del-color="${c.id}" title="Eliminar">✕</button>
+            </li>
+        `).join("") || '<li class="chip">Sin colores</li>';
+    }
+
+    $("#form-color").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const nombre = $("#color-nombre").value.trim();
+        const hex = $("#color-hex").value;
+        if (!nombre) return;
+        const { error } = await sb.from("colores").insert({ nombre, hex, orden: 0 });
+        if (error) { toast("Error: " + error.message, false); return; }
+        $("#color-nombre").value = "";
+        cargarColores();
+        toast("Color agregado");
+    });
+
+    document.addEventListener("click", async (e) => {
+        const btn = e.target.closest("[data-del-color]");
+        if (!btn) return;
+        if (!confirm("¿Eliminar este color?")) return;
+        const { error } = await sb.from("colores").delete().eq("id", btn.dataset.delColor);
+        if (error) { toast("Error: " + error.message, false); return; }
+        cargarColores();
+        toast("Color eliminado");
     });
 
     /* ===== CONFIGURACIÓN ===== */
@@ -360,6 +395,7 @@ console.log("PANEL ELROJO 3D iniciado.");
         $("#vista-dash").hidden = false;
         cargarCategorias();
         cargarProductos();
+        cargarColores();
         cargarConfiguracion();
     }
 

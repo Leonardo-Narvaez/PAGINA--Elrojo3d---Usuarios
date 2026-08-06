@@ -50,6 +50,91 @@ console.log("ELROJO STUDIO iniciado correctamente.");
         };
     }
 
+    function llenarColores(lista) {
+        if (!lista || !lista.length) return;
+        const opts = '<option value="" data-hex="">Elegir</option>' +
+            lista.map(c => `<option value="${c.nombre}" data-hex="${c.hex}">${c.nombre}</option>`).join("");
+        const sel = $("#op-color");
+        const selTxt = $("#op-color-texto");
+        if (sel) { sel.innerHTML = opts; transformarSelect(sel); }
+        if (selTxt) { selTxt.innerHTML = opts; transformarSelect(selTxt); }
+    }
+
+    function transformarSelect(sel) {
+        if (!sel || sel.dataset.dropdown) return;
+
+        const cont = document.createElement("div");
+        cont.className = "dropdown";
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "dropdown-btn";
+        const ico = document.createElement("span");
+        ico.className = "dropdown-ico";
+        const label = document.createElement("span");
+        label.className = "dropdown-label";
+        const arrow = document.createElement("span");
+        arrow.className = "dropdown-arrow";
+        arrow.textContent = "▾";
+        btn.append(ico, label, arrow);
+
+        const list = document.createElement("ul");
+        list.className = "dropdown-list";
+        list.hidden = true;
+
+        const actualizar = () => {
+            const opt = sel.options[sel.selectedIndex];
+            const nombre = opt ? opt.text : "";
+            label.textContent = nombre;
+            if (opt && opt.dataset.hex) {
+                ico.style.display = "";
+                ico.style.background = opt.dataset.hex;
+            } else {
+                ico.style.display = "none";
+            }
+        };
+
+        const cerrar = () => { list.hidden = true; };
+
+        [...sel.options].forEach(opt => {
+            const li = document.createElement("li");
+            if (opt.dataset.hex) {
+                const sw = document.createElement("span");
+                sw.className = "dropdown-swatch";
+                sw.style.background = opt.dataset.hex;
+                li.appendChild(sw);
+            }
+            const txt = document.createElement("span");
+            txt.textContent = opt.text;
+            li.append(txt);
+            li.addEventListener("click", () => {
+                sel.value = opt.value;
+                actualizar();
+                cerrar();
+                sel.dispatchEvent(new Event("change", { bubbles: true }));
+            });
+            list.appendChild(li);
+        });
+
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            document.querySelectorAll(".dropdown-list:not([hidden])").forEach(l => l.hidden = true);
+            list.hidden = !list.hidden;
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!cont.contains(e.target)) cerrar();
+        });
+
+        cont.append(btn, list);
+        sel.parentNode.insertBefore(cont, sel);
+        cont.appendChild(sel);
+        sel.hidden = true;
+        sel.dataset.dropdown = "1";
+
+        actualizar();
+    }
+
     function cargarCatalogo() {
         const cfg = window.ELROJO_CONFIG || {};
 
@@ -59,11 +144,13 @@ console.log("ELROJO STUDIO iniciado correctamente.");
                     const sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
                     return Promise.all([
                         sb.from("categorias").select("id,nombre,orden").order("orden"),
-                        sb.from("productos").select("*").order("actualizado_en", { ascending: false })
-                    ]).then(([rc, rp]) => {
+                        sb.from("productos").select("*").order("actualizado_en", { ascending: false }),
+                        sb.from("colores").select("nombre,hex,orden").order("orden")
+                    ]).then(([rc, rp, rcol]) => {
                         if (rc.error || rp.error) throw rc.error || rp.error;
                         categorias = (rc.data || []).map(c => ({ id: c.id, nombre: c.nombre }));
                         catalogo = (rp.data || []).map(mapearProducto);
+                        if (!rcol.error) llenarColores(rcol.data || []);
 
                         sb.from("configuracion")
                             .select("clave,valor")
@@ -244,31 +331,35 @@ console.log("ELROJO STUDIO iniciado correctamente.");
 
     /* ===== PERSONALIZADOR ===== */
     const previewImg = $("#preview-img");
-    const previewTag = $("#preview-tag");
+    const campoColorTexto = $("#campo-color-texto");
     const opProducto = $("#op-producto");
     const opColor = $("#op-color");
+    const opColorTexto = $("#op-color-texto");
     const opTexto = $("#op-texto");
-    const opAcabado = $("#op-acabado");
     const opContacto = $("#op-contacto");
     const precioEstimado = $("#precio-estimado");
 
-    const EXTRA_ACABADO = { "Mate": 0, "Brillante": 4000 };
+    const esPlaca = () => {
+        const p = getProducto(opProducto.value);
+        return (opProducto.value + " " + (p ? p.nombre : "")).toLowerCase().includes("placa");
+    };
 
     function actualizarPreview() {
+        const placa = esPlaca();
         const p = getProducto(opProducto.value);
         previewImg.src = (p && p.img) ? p.img : PLACEHOLDER;
-        const texto = (opTexto.value || "ELROJO").toUpperCase();
-        previewTag.textContent = texto.slice(0, 14);
+        campoColorTexto.hidden = !placa;
+        opTexto.placeholder = placa ? "Nombre / Placa / País" : "Nombre o frase corta";
     }
 
     function actualizarPrecio() {
         const p = getProducto(opProducto.value);
-        const total = (p ? p.precio : 0) + (EXTRA_ACABADO[opAcabado.value] || 0);
+        const total = (p ? p.precio : 0);
         precioEstimado.textContent = fmt(total);
         return total;
     }
 
-    [opProducto, opTexto, opAcabado].forEach(el =>
+    [opProducto, opTexto].forEach(el =>
         el.addEventListener("input", () => { actualizarPreview(); actualizarPrecio(); })
     );
 
@@ -276,18 +367,33 @@ console.log("ELROJO STUDIO iniciado correctamente.");
         const texto = opTexto.value.trim();
         const contacto = opContacto.value.trim();
         if (!texto) { toast("Escribe el texto para tu diseño"); opTexto.focus(); return; }
+        if (!opColor.value) {
+            toast("Elige un color principal");
+            const d = opColor.closest(".dropdown");
+            if (d) d.scrollIntoView({ behavior: "smooth", block: "center" });
+            return;
+        }
+        if (esPlaca() && !opColorTexto.value) {
+            toast("Elige el color del texto");
+            const d = opColorTexto.closest(".dropdown");
+            if (d) d.scrollIntoView({ behavior: "smooth", block: "center" });
+            return;
+        }
         if (!contacto) { toast("Deja tu nombre o contacto para la cotización"); opContacto.focus(); return; }
 
         const p = getProducto(opProducto.value);
-        const mensaje = [
+        const lineas = [
             "Hola 👋 Quiero pedir una cotización personalizada:",
             "• Producto: *" + (p ? p.nombre : opProducto.value) + "*",
             "• Color: " + opColor.value,
             "• Texto: " + texto,
-            "• Acabado: " + opAcabado.value,
             "• Contacto: " + contacto,
             "• Precio estimado: *" + fmt(actualizarPrecio()) + "*"
-        ].join("\n");
+        ];
+        if (esPlaca()) {
+            lineas.splice(4, 0, "• Color del texto: " + opColorTexto.value);
+        }
+        const mensaje = lineas.join("\n");
 
         abrirWhatsApp(mensaje);
     });
