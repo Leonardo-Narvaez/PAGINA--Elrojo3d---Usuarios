@@ -46,13 +46,24 @@ console.log("PANEL ELROJO 3D iniciado.");
             throw e;
         }
 
-        sb.auth.getSession().then(({ data }) => {
+        sb.auth.getSession().then(async ({ data }) => {
             sesion = data.session;
-            refrescarVista();
+            if (!sesion) { refrescarVista(); return; }
+            if (sesionToken && await verificarSesionActiva()) {
+                iniciarVigilancia();
+                refrescarVista();
+            } else {
+                await cerrarSesion(false, "Tu sesión ya no es válida. Inicia sesión de nuevo.");
+            }
         });
 
         sb.auth.onAuthStateChange((_evt, s) => {
             sesion = s;
+            if (s) {
+                iniciarVigilancia();
+            } else {
+                detenerVigilancia();
+            }
             refrescarVista();
         });
     }
@@ -74,13 +85,80 @@ console.log("PANEL ELROJO 3D iniciado.");
         $$(".vista").forEach(v => v.hidden = true);
     }
 
-    /* ===== AUTH ===== */
-    let modoRegistro = false;
-    $("#btn-modo-registro").addEventListener("click", () => {
-        modoRegistro = !modoRegistro;
-        $("#btn-modo-registro").textContent = modoRegistro ? "Ya tengo cuenta" : "Crear cuenta";
-    });
+    /* ===== SESIÓN: una sola activa + cierre por inactividad ===== */
+    const SESSION_KEY = "elrojo3d_sesion_token";
+    const INACTIVIDAD_MS = 10 * 60 * 1000;
+    const HEARTBEAT_MS = 30 * 1000;
 
+    let sesionToken = localStorage.getItem(SESSION_KEY) || null;
+    let inactividadTimer = null;
+    let heartbeatTimer = null;
+    let cerrando = false;
+
+    function generarToken() {
+        if (window.crypto && window.crypto.randomUUID) return crypto.randomUUID();
+        return "t-" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    }
+
+    async function verificarSesionActiva() {
+        if (!sesion) return false;
+        const { data } = await sb.from("sesiones_activas")
+            .select("token")
+            .eq("user_id", sesion.user.id)
+            .maybeSingle();
+        return !!(sesionToken && data && data.token === sesionToken);
+    }
+
+    function detenerVigilancia() {
+        if (inactividadTimer) clearTimeout(inactividadTimer);
+        if (heartbeatTimer) clearInterval(heartbeatTimer);
+        inactividadTimer = null;
+        heartbeatTimer = null;
+    }
+
+    function iniciarVigilancia() {
+        detenerVigilancia();
+        if (cerrando) return;
+        inactividadTimer = setTimeout(() => cerrarSesion(true, "Sesión cerrada por inactividad."), INACTIVIDAD_MS);
+        heartbeatTimer = setInterval(async () => {
+            if (cerrando || !sesion || !sesionToken) return;
+            if (!(await verificarSesionActiva())) {
+                cerrarSesion(false, "Tu sesión se cerró: iniciaste sesión desde otro dispositivo.");
+            }
+        }, HEARTBEAT_MS);
+    }
+
+    function reiniciarInactividad() {
+        if (cerrando || !sesion) return;
+        if (inactividadTimer) clearTimeout(inactividadTimer);
+        inactividadTimer = setTimeout(() => cerrarSesion(true, "Sesión cerrada por inactividad."), INACTIVIDAD_MS);
+    }
+
+    ["mousemove", "mousedown", "keydown", "scroll", "touchstart"].forEach(ev =>
+        document.addEventListener(ev, reiniciarInactividad, { passive: true })
+    );
+
+    async function cerrarSesion(eliminarFila, msg) {
+        if (cerrando) return;
+        cerrando = true;
+        detenerVigilancia();
+        try {
+            if (eliminarFila && sesion) {
+                await sb.from("sesiones_activas").delete().eq("user_id", sesion.user.id);
+            }
+        } catch (e) {}
+        sesionToken = null;
+        localStorage.removeItem(SESSION_KEY);
+        try {
+            if (sesion) await sb.auth.signOut();
+        } catch (e) {}
+        sesion = null;
+        cerrando = false;
+        if (msg) toast(msg, false);
+        refrescarVista();
+    }
+
+    /* ===== AUTH ===== */
     $("#form-login").addEventListener("submit", async (e) => {
         e.preventDefault();
         if (!sb) return;
@@ -89,21 +167,29 @@ console.log("PANEL ELROJO 3D iniciado.");
         const email = $("#login-email").value.trim();
         const pass = $("#login-pass").value;
 
-        let error;
-        if (modoRegistro) {
-            const r = await sb.auth.signUp({ email, password: pass });
-            error = r.error;
-            if (!r.error) toast("Cuenta creada. Revisa tu correo para confirmarla.");
-        } else {
-            const r = await sb.auth.signInWithPassword({ email, password: pass });
-            error = r.error;
-        }
+        const token = generarToken();
+        sesionToken = token;
+        localStorage.setItem(SESSION_KEY, token);
 
-        if (error) { err.textContent = "Error: " + error.message; err.hidden = false; }
+        const r = await sb.auth.signInWithPassword({ email, password: pass });
+        if (r.error) {
+            sesionToken = null;
+            localStorage.removeItem(SESSION_KEY);
+            err.textContent = "Error: " + r.error.message;
+            err.hidden = false;
+        } else {
+            const { error: sesErr } = await sb.from("sesiones_activas")
+                .upsert({ user_id: r.data.user.id, token }, { onConflict: "user_id" });
+            if (sesErr) {
+                await sb.auth.signOut();
+                err.textContent = "Error: " + sesErr.message;
+                err.hidden = false;
+            }
+        }
         $("#login-pass").value = "";
     });
 
-    $("#btn-salir").addEventListener("click", () => { sb.auth.signOut(); });
+    $("#btn-salir").addEventListener("click", () => cerrarSesion(true, "Sesión cerrada."));
 
     /* ===== CATEGORÍAS ===== */
     async function cargarCategorias() {
