@@ -1,57 +1,415 @@
 {
   "categorias": [
-    { "id": "todos", "nombre": "Todos" },
-    { "id": "accesorios", "nombre": "Accesorios" },
-    { "id": "personalizados", "nombre": "Personalizados" },
-    { "id": "identificacion", "nombre": "Identificación" }
+    { "id": "llaveros", "nombre": "Llaveros", "orden": 1 },
+    { "id": "soporte", "nombre": "Soporte", "orden": 2 },
+    { "id": "mascotas", "nombre": "Mascotas", "orden": 3 },
+    { "id": "personalizados", "nombre": "Personalizados", "orden": 4 },
+    { "id": "temporada", "nombre": "Temporada", "orden": 5 },
+    { "id": "bolsas", "nombre": "Bolsas", "orden": 6 },
+    { "id": "impresion", "nombre": "Impresión", "orden": 7 },
+    { "id": "cuadros", "nombre": "Cuadros", "orden": 8 },
+    { "id": "gancho", "nombre": "Gancho", "orden": 9 },
+    { "id": "iman", "nombre": "Imanes", "orden": 10 }
   ],
   "productos": [
     {
-      "id": "soporte-casco",
-      "nombre": "Soporte para casco",
-      "desc": "Soporte resistente impreso en 3D, diseñado especialmente para motociclistas. Fija tu casco de forma segura y con estilo.",
-      "descCorta": "Diseñado especialmente para motociclistas.",
-      "precio": 15000,
-      "img": "images/products/soporte-casco.png",
-      "categoria": "accesorios",
+      "id": "ve-plv",
+      "nombre": "Placa Vehículos",
+      "desc": "Placa impresa en 3D para tu vehículo. Personalizada con el texto y los colores que quieras.",
+      "descCorta": "Placa personalizada para tu vehículo.",
+      "precio": 12000,
+      "img": "images/products/placeholder.png",
+      "categoria": "llaveros",
       "disponible": true,
       "feats": [
-        "PLA reforzado y duradero",
+        "Texto y colores personalizados",
+        "Material resistente",
+        "Acabado de alta calidad",
+        "Diseño exclusivo"
+      ]
+    },
+    {
+      "id": "so-scp",
+      "nombre": "Soporte Casco/Pared",
+      "desc": "Soporte resistente impreso en 3D para fijar tu casco en la pared o donde prefieras. Fácil instalación y gran resistencia.",
+      "descCorta": "Soporte resistente para casco o pared.",
+      "precio": 15000,
+      "img": "images/products/placeholder.png",
+      "categoria": "soporte",
+      "disponible": true,
+      "feats": [
         "Instalación sin herramientas",
         "Colores personalizables",
+        "Material reforzado",
         "Garantía de fabricación"
       ]
     },
     {
-      "id": "llaveros",
-      "nombre": "Llaveros personalizados",
-      "desc": "Llaveros 100% personalizados con tus colores y texto favoritos. El detalle perfecto para tu moto o tus llaves.",
-      "descCorta": "100% personalizados con tus colores favoritos.",
-      "precio": 6000,
-      "img": "images/products/llaveros.png",
-      "categoria": "personalizados",
+      "id": "ll-nb",
+      "nombre": "Llavero de texto",
+      "desc": "Llavero 100% personalizado con el texto que elijas. El detalle perfecto para tus llaves o para regalar.",
+      "descCorta": "Personalizado con el texto que quieras.",
+      "precio": 8000,
+      "img": "images/products/placeholder.png",
+      "categoria": "llaveros",
       "disponible": true,
       "feats": [
-        "Diseño a tu gusto",
-        "Colores a elección",
+        "Texto a tu elección",
+        "Colores personalizables",
         "Ligero y resistente",
         "Ideal para regalo"
       ]
     },
     {
-      "id": "placas",
-      "nombre": "Placas personalizadas",
-      "desc": "Placas únicas con diseños exclusivos para motos y vehículos. Dale identidad a tu máquina.",
-      "descCorta": "Diseños únicos para motos y vehículos.",
-      "precio": 12000,
-      "img": "images/products/placas.png",
-      "categoria": "identificacion",
+      "id": "ma-plm",
+      "nombre": "Placas de mascotas",
+      "desc": "Placas personalizadas para tus mascotas con su nombre y tu contacto. Resistentes y con estilo.",
+      "descCorta": "Identificación personalizada para tu mascota.",
+      "precio": 10000,
+      "img": "images/products/placeholder.png",
+      "categoria": "mascotas",
       "disponible": true,
       "feats": [
-        "Texto y colores personalizados",
-        "Material resistente a la intemperie",
-        "Diseños exclusivos",
-        "Adhesivo o tornillos incluidos"
+        "Nombre y contacto personalizados",
+        "Material resistente",
+        "Variedad de colores",
+        "Diseño para mascotas"
+      ]
+    },
+    {
+      "id": "cll-ma",
+      "nombre": "Collar para mascotas",
+      "desc": "Collar impreso en 3D para tu mascota. Personalizado, liviano y con excelente acabado.",
+      "descCorta": "Collar impreso en 3D personalizado.",
+      "precio": 6000,
+      "img": "images/products/placeholder.png",
+      "categoria": "mascotas",
+      "disponible": true,
+      "feats": [
+        "Personalizable",
+        "Ligero y cómodo",
+        "Resistente",
+        "Colores a elección"
+      ]
+    },
+    {
+      "id": "pe-per",
+      "nombre": "Personalizado",
+      "desc": "¿Tienes una idea? La hacemos realidad. Cuéntanos qué necesitas y te cotizamos tu producto personalizado.",
+      "descCorta": "Tu idea hecha realidad en 3D.",
+      "precio": 0,
+      "img": "images/products/placeholder.png",
+      "categoria": "personalizados",
+      "disponible": true,
+      "feats": [
+        "Diseño a tu medida",
+        "Materiales de calidad",
+        "Cotización personalizada",
+        "Proceso guiado"
+      ]
+    },
+    {
+      "id": "pe-bdn",
+      "nombre": "Bolas de navidad",
+      "desc": "Bolas decorativas impresas en 3D para decorar tu navidad. Personalizables con nombres y colores.",
+      "descCorta": "Bolas decorativas personalizables.",
+      "precio": 10000,
+      "img": "images/products/placeholder.png",
+      "categoria": "temporada",
+      "disponible": true,
+      "feats": [
+        "Personalizables con nombres",
+        "Colores navideños",
+        "Duraderas",
+        "Ideal para regalar"
+      ]
+    },
+    {
+      "id": "ll-lch",
+      "nombre": "Llavero casco helmet",
+      "desc": "Llavero con forma de casco para motociclistas. Personalizado con tus colores favoritos.",
+      "descCorta": "Llavero con forma de casco.",
+      "precio": 12000,
+      "img": "images/products/placeholder.png",
+      "categoria": "llaveros",
+      "disponible": true,
+      "feats": [
+        "Diseño de casco",
+        "Colores personalizables",
+        "Ligero y resistente",
+        "Perfecto para moteros"
+      ]
+    },
+    {
+      "id": "so-plc",
+      "nombre": "Porta llavero casco",
+      "desc": "Accesorio impreso en 3D para llevar tus llaves en el casco. Práctico y con estilo.",
+      "descCorta": "Lleva tus llaves en el casco.",
+      "precio": 20000,
+      "img": "images/products/placeholder.png",
+      "categoria": "soporte",
+      "disponible": true,
+      "feats": [
+        "Fácil instalación",
+        "Resistente",
+        "Colores personalizables",
+        "Ideal para moteros"
+      ]
+    },
+    {
+      "id": "ll-ltb",
+      "nombre": "Llavero de Tiburón",
+      "desc": "Llavero con diseño de tiburón. Original, llamativo y personalizable.",
+      "descCorta": "Llavero original con diseño de tiburón.",
+      "precio": 15000,
+      "img": "images/products/placeholder.png",
+      "categoria": "llaveros",
+      "disponible": true,
+      "feats": [
+        "Diseño exclusivo",
+        "Colores personalizables",
+        "Ligero y resistente",
+        "Llamativo y original"
+      ]
+    },
+    {
+      "id": "ll-fm",
+      "nombre": "Llavero Flor Margarita",
+      "desc": "Llavero con diseño de flor margarita. Delicado, bonito y personalizable.",
+      "descCorta": "Llavero con diseño de margarita.",
+      "precio": 6000,
+      "img": "images/products/placeholder.png",
+      "categoria": "llaveros",
+      "disponible": true,
+      "feats": [
+        "Diseño floral",
+        "Colores personalizables",
+        "Ligero",
+        "Ideal para regalo"
+      ]
+    },
+    {
+      "id": "ll-m",
+      "nombre": "Llavero Mariposa",
+      "desc": "Llavero con diseño de mariposa. Perfecto para regalar, personalizable en colores.",
+      "descCorta": "Llavero con diseño de mariposa.",
+      "precio": 6000,
+      "img": "images/products/placeholder.png",
+      "categoria": "llaveros",
+      "disponible": true,
+      "feats": [
+        "Diseño de mariposa",
+        "Colores personalizables",
+        "Ligero",
+        "Ideal para regalo"
+      ]
+    },
+    {
+      "id": "ll-dl",
+      "nombre": "Llavero AbreLata",
+      "desc": "Llavero con abrelatas incorporado. Práctico, útil y personalizable.",
+      "descCorta": "Llavero con abrelatas incorporado.",
+      "precio": 10000,
+      "img": "images/products/placeholder.png",
+      "categoria": "llaveros",
+      "disponible": true,
+      "feats": [
+        "Abrelatas incorporado",
+        "Práctico y funcional",
+        "Colores personalizables",
+        "Ligero"
+      ]
+    },
+    {
+      "id": "bd",
+      "nombre": "Bolsas Decorativas TELA/HOLOGRAFICAS",
+      "desc": "Bolsas decorativas en tela u holográficas para acompañar tus productos personalizados. Ideal para entregas y regalos.",
+      "descCorta": "Bolsas decorativas en tela u holográficas.",
+      "precio": 2000,
+      "img": "images/products/placeholder.png",
+      "categoria": "bolsas",
+      "disponible": true,
+      "feats": [
+        "Tela u holográficas",
+        "Varios diseños",
+        "Ideal para regalo",
+        "Económicas"
+      ]
+    },
+    {
+      "id": "tpp",
+      "nombre": "Toppers variedad",
+      "desc": "Toppers personalizados para tus eventos. Cuéntanos la ocasión y lo hacemos realidad.",
+      "descCorta": "Toppers personalizados para eventos.",
+      "precio": 0,
+      "img": "images/products/placeholder.png",
+      "categoria": "personalizados",
+      "disponible": true,
+      "feats": [
+        "Diseño a tu medida",
+        "Variedad de temáticas",
+        "Cotización personalizada",
+        "Acabado de calidad"
+      ]
+    },
+    {
+      "id": "k-fp",
+      "nombre": "Kit de fotos polaroid x5",
+      "desc": "Kit de 5 fotos impresas estilo polaroid. Perfecto para tus recuerdos y regalos.",
+      "descCorta": "Kit de 5 fotos estilo polaroid.",
+      "precio": 5000,
+      "img": "images/products/placeholder.png",
+      "categoria": "personalizados",
+      "disponible": true,
+      "feats": [
+        "5 fotos incluidas",
+        "Estilo polaroid",
+        "Ideal para regalo",
+        "Personalizable"
+      ]
+    },
+    {
+      "id": "impr",
+      "nombre": "Hoja-impresion",
+      "desc": "Servicio de impresión 3D por hoja. Envíanos tu diseño y lo imprimimos por ti.",
+      "descCorta": "Impresión 3D por hoja.",
+      "precio": 3000,
+      "img": "images/products/placeholder.png",
+      "categoria": "impresion",
+      "disponible": true,
+      "feats": [
+        "Impresión por hoja",
+        "Materiales de calidad",
+        "Acabado profesional",
+        "Envío a todo Colombia"
+      ]
+    },
+    {
+      "id": "ll-tr",
+      "nombre": "Llavero Trasparente Rectangular",
+      "desc": "Llavero transparente rectangular donde puedes insertar tu foto o texto. Ideal para regalar.",
+      "descCorta": "Llavero transparente rectangular.",
+      "precio": 8000,
+      "img": "images/products/placeholder.png",
+      "categoria": "llaveros",
+      "disponible": true,
+      "feats": [
+        "Transparente y elegante",
+        "Insertable con foto/texto",
+        "Ligero",
+        "Ideal para regalo"
+      ]
+    },
+    {
+      "id": "ll-tc",
+      "nombre": "Llavero Trasparente Circular",
+      "desc": "Llavero transparente circular con espacio para tu foto o texto. Moderno y personalizable.",
+      "descCorta": "Llavero transparente circular.",
+      "precio": 8000,
+      "img": "images/products/placeholder.png",
+      "categoria": "llaveros",
+      "disponible": true,
+      "feats": [
+        "Transparente y elegante",
+        "Insertable con foto/texto",
+        "Ligero",
+        "Ideal para regalo"
+      ]
+    },
+    {
+      "id": "ll-rc",
+      "nombre": "Llavero Resina Circular",
+      "desc": "Llavero circular en resina con acabado brillante. Personalizable en colores.",
+      "descCorta": "Llavero circular en resina.",
+      "precio": 10000,
+      "img": "images/products/placeholder.png",
+      "categoria": "llaveros",
+      "disponible": true,
+      "feats": [
+        "Acabado en resina",
+        "Brillante y duradero",
+        "Colores personalizables",
+        "Ligero"
+      ]
+    },
+    {
+      "id": "ll-ra-z",
+      "nombre": "Llavero Resina A-Z#",
+      "desc": "Llavero de resina con la inicial que quieras, de la A a la Z. Perfecto para regalar.",
+      "descCorta": "Llavero de resina con inicial.",
+      "precio": 10000,
+      "img": "images/products/placeholder.png",
+      "categoria": "llaveros",
+      "disponible": true,
+      "feats": [
+        "Inicial de la A a la Z",
+        "Acabado en resina",
+        "Colores personalizables",
+        "Ideal para regalo"
+      ]
+    },
+    {
+      "id": "ll-plar",
+      "nombre": "Llavero PLA+Resina 5x4",
+      "desc": "Llavero combinado en PLA y resina, tamaño 5x4. Resistente y con acabado premium.",
+      "descCorta": "Llavero PLA + resina 5x4.",
+      "precio": 10000,
+      "img": "images/products/placeholder.png",
+      "categoria": "llaveros",
+      "disponible": true,
+      "feats": [
+        "Combinación PLA + resina",
+        "Tamaño 5x4",
+        "Acabado premium",
+        "Colores personalizables"
+      ]
+    },
+    {
+      "id": "c-c",
+      "nombre": "Cuadros + collage",
+      "desc": "Cuadros y collages personalizados. Contáctanos para conocer los tamaños y precios disponibles.",
+      "descCorta": "Cuadros y collages personalizados.",
+      "precio": 10000,
+      "img": "images/products/placeholder.png",
+      "categoria": "cuadros",
+      "disponible": true,
+      "feats": [
+        "Varios tamaños",
+        "Diseño personalizado",
+        "Acabado profesional",
+        "Ideal para regalo"
+      ]
+    },
+    {
+      "id": "pn",
+      "nombre": "Pin",
+      "desc": "Pin personalizado impreso en 3D. Ideal para campañas, eventos o colección.",
+      "descCorta": "Pin personalizado impreso en 3D.",
+      "precio": 7000,
+      "img": "images/products/placeholder.png",
+      "categoria": "gancho",
+      "disponible": true,
+      "feats": [
+        "Personalizable",
+        "Ligero",
+        "Varios diseños",
+        "Resistente"
+      ]
+    },
+    {
+      "id": "im",
+      "nombre": "Imanes",
+      "desc": "Imanes personalizados impresos en 3D. Decorativos y prácticos para tu nevera o pizarra.",
+      "descCorta": "Imanes personalizados.",
+      "precio": 7000,
+      "img": "images/products/placeholder.png",
+      "categoria": "iman",
+      "disponible": true,
+      "feats": [
+        "Personalizables",
+        "Varios diseños",
+        "Decorativos",
+        "Resistentes"
       ]
     }
   ]

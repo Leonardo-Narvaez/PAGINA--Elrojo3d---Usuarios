@@ -262,12 +262,35 @@ console.log("PANEL ELROJO 3D iniciado.");
     });
 
     /* ===== CONFIGURACIÓN ===== */
+    function pintarMantenimiento(valor) {
+        const on = valor === "1";
+        const sw = $("#cfg-mantenimiento");
+        const est = $("#mant-estado");
+        const txt = $("#mant-texto");
+        if (sw) sw.checked = on;
+        if (est) {
+            est.textContent = on ? "Mantenimiento ACTIVO" : "Mantenimiento desactivado";
+            est.className = "mant-estado " + (on ? "on" : "off");
+        }
+        if (txt) {
+            txt.textContent = on
+                ? "El catálogo está oculto. Los clientes solo ven el aviso de mantenimiento."
+                : "El catálogo está visible para los clientes.";
+        }
+    }
+
     async function cargarConfiguracion() {
         const { data, error } = await sb.from("configuracion")
             .select("clave,valor")
             .eq("clave", "whatsapp")
             .maybeSingle();
         if (!error && data) $("#cfg-whatsapp").value = data.valor;
+
+        const { data: m, error: me } = await sb.from("configuracion")
+            .select("clave,valor")
+            .eq("clave", "mantenimiento")
+            .maybeSingle();
+        if (!me) pintarMantenimiento(m ? m.valor : "0");
     }
 
     $("#form-config").addEventListener("submit", async (e) => {
@@ -277,6 +300,24 @@ console.log("PANEL ELROJO 3D iniciado.");
             .upsert({ clave: "whatsapp", valor }, { onConflict: "clave" });
         if (error) { toast("Error: " + error.message, false); return; }
         toast("Número de WhatsApp guardado");
+    });
+
+    $("#cfg-mantenimiento").addEventListener("change", async (e) => {
+        const activar = e.target.checked;
+        if (activar) {
+            const ok = confirm("¿Activar el mantenimiento? El catálogo se ocultará para los clientes mientras actualizas productos.");
+            if (!ok) { e.target.checked = false; return; }
+        }
+        const valor = activar ? "1" : "0";
+        const { error } = await sb.from("configuracion")
+            .upsert({ clave: "mantenimiento", valor }, { onConflict: "clave" });
+        if (error) {
+            toast("Error: " + error.message, false);
+            e.target.checked = !activar;
+            return;
+        }
+        pintarMantenimiento(valor);
+        toast(activar ? "Mantenimiento activado" : "Mantenimiento desactivado");
     });
 
     /* ===== PRODUCTOS ===== */

@@ -93,12 +93,23 @@ create table if not exists public.categorias (
                                                                     on storage.objects for delete
                                                                     using (bucket_id = 'productos' and auth.role() = 'authenticated');
 
-                                                                    -- DATOS INICIALES (opcional) ------------------------------------
-                                                                    insert into public.categorias (id, nombre, orden) values
-                                                                        ('accesorios', 'Accesorios', 1),
-                                                                            ('personalizados', 'Personalizados', 2),
-                                                                                ('identificacion', 'Identificación', 3)
-                                                                                on conflict (id) do nothing;
+-- DATOS INICIALES (opcional) ------------------------------------
+-- Catálogo 2026: 10 categorías (orden = píldoras del sitio).
+-- Los productos se cargan con la migración migracion_catalogo_2026.sql
+insert into public.categorias (id, nombre, orden) values
+    ('llaveros', 'Llaveros', 1),
+    ('soporte', 'Soporte', 2),
+    ('mascotas', 'Mascotas', 3),
+    ('personalizados', 'Personalizados', 4),
+    ('temporada', 'Temporada', 5),
+    ('bolsas', 'Bolsas', 6),
+    ('impresion', 'Impresión', 7),
+    ('cuadros', 'Cuadros', 8),
+    ('gancho', 'Gancho', 9),
+    ('iman', 'Imanes', 10)
+on conflict (id) do update set nombre = excluded.nombre, orden = excluded.orden;
+
+delete from public.categorias where id in ('accesorios', 'identificacion');
 
                                                                                 -- CONFIGURACIÓN --------------------------------------------------
                                                                                 create table if not exists public.configuracion (

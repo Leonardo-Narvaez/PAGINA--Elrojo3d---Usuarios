@@ -164,6 +164,10 @@ transform:translateY(0);
 
 /* ============ FILTROS Y BÃšSQUEDA ============ */
 
+[hidden]{
+display:none !important;
+}
+
 .filtros{
 
 display:flex;
@@ -210,6 +214,33 @@ color:white;
 
 }
 
+.filtro-mas{
+
+flex:none;
+width:auto;
+max-width:200px;
+padding:10px 18px;
+border:1px solid rgba(255,49,49,.35);
+border-radius:30px;
+background:#1a1a1a;
+color:#ffd0d0;
+cursor:pointer;
+font-size:.9rem;
+font-weight:500;
+font-family:'Inter',sans-serif;
+outline:none;
+
+}
+
+.filtro-mas:hover{
+border-color:#ff3131;
+color:white;
+}
+
+.filtro-mas:focus{
+outline:1px solid rgba(255,49,49,.6);
+}
+
 .buscar{
 
 flex:1;
@@ -228,6 +259,25 @@ outline:none;
 outline:1px solid rgba(255,49,49,.6);
 }
 
+.filtro-select{
+
+display:none;
+width:100%;
+padding:12px 18px;
+border:none;
+border-radius:30px;
+background:#202020;
+color:white;
+outline:none;
+font-family:'Inter',sans-serif;
+font-size:.95rem;
+
+}
+
+.filtro-select:focus{
+outline:1px solid rgba(255,49,49,.6);
+}
+
 .cards-empty{
 
 grid-column:1 / -1;
@@ -235,6 +285,75 @@ text-align:center;
 color:#666;
 padding:60px 0;
 font-size:1.05rem;
+
+}
+
+/* ============ MANTENIMIENTO ============ */
+
+.banner-mantenimiento{
+
+background:#ff3131;
+color:white;
+text-align:center;
+padding:14px 20px;
+font-weight:600;
+font-size:.95rem;
+
+}
+
+.banner-mantenimiento[hidden]{
+display:none;
+}
+
+.carousel-wrap[hidden]{
+display:none;
+}
+
+/* ============ ERROR CATÁLOGO ============ */
+
+.catalog-error{
+
+grid-column:1 / -1;
+text-align:center;
+background:#131313;
+border:1px solid rgba(255,49,49,.25);
+border-radius:25px;
+padding:60px 24px;
+
+}
+
+.catalog-error[hidden]{
+display:none;
+}
+
+.catalog-error-icon{
+
+width:56px;
+height:56px;
+margin:0 auto 18px;
+border-radius:50%;
+background:rgba(255,49,49,.15);
+color:#ff3131;
+font-size:1.6rem;
+display:flex;
+justify-content:center;
+align-items:center;
+
+}
+
+.catalog-error h3{
+
+font-size:1.5rem;
+margin-bottom:12px;
+
+}
+
+.catalog-error p{
+
+color:#b5b5b5;
+line-height:1.7;
+max-width:460px;
+margin:0 auto 28px;
 
 }
 
@@ -254,8 +373,12 @@ max-width:none;
 width:100%;
 }
 
+.filtro-select{
+display:block;
+}
+
 .filtro-categorias{
-justify-content:center;
+display:none;
 }
 
 }

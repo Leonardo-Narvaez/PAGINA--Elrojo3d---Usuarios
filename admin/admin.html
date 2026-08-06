@@ -24,7 +24,7 @@
 
             <form id="form-login">
                 <label>Correo</label>
-                <input type="email" id="login-email" required placeholder="admin@elrojo3d.com">
+                <input type="email" id="login-email" required placeholder="usuario@dominio.com">
                 <label>Contraseña</label>
                 <input type="password" id="login-pass" required placeholder="••••••••">
                 <button type="submit" class="btn primary">Entrar</button>
@@ -107,6 +107,27 @@
                     <button type="submit" class="btn primary">Guardar</button>
                 </form>
                 <p class="hint">Número en formato internacional, sin "+". Las ventas "Comprar" y las cotizaciones llegan aquí por WhatsApp.</p>
+
+            </section>
+
+            <section class="card panel">
+
+                <div class="panel-head">
+                    <h3>Mantenimiento de productos</h3>
+                </div>
+
+                <div class="mant-row">
+                    <label class="switch" title="Activar o desactivar el modo mantenimiento">
+                        <input type="checkbox" id="cfg-mantenimiento">
+                        <span class="slider"></span>
+                    </label>
+                    <div class="mant-info">
+                        <span class="mant-estado" id="mant-estado">Mantenimiento desactivado</span>
+                        <span class="mant-texto" id="mant-texto">El catálogo está visible para los clientes.</span>
+                    </div>
+                </div>
+
+                <p class="hint">Al activarlo, la página oculta el catálogo y muestra el aviso de mantenimiento mientras actualizas tus productos. Los clientes no podrán ver ni comprar nada hasta que lo desactives.</p>
 
             </section>
 

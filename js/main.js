@@ -18,6 +18,7 @@ console.log("ELROJO STUDIO iniciado correctamente.");
 
     /* ===== WHATSAPP (desde la configuración de Supabase) ===== */
     let WHATSAPP = ((window.ELROJO_CONFIG || {}).whatsapp || "").replace(/\D/g, "");
+    let mantenimientoActivo = false;
 
     function abrirWhatsApp(mensaje) {
         if (!WHATSAPP) { toast("Configura tu número de WhatsApp en js/config.js"); return; }
@@ -25,7 +26,10 @@ console.log("ELROJO STUDIO iniciado correctamente.");
     }
 
     function mensajeProducto(p) {
-        return "Hola 👋 Quiero comprar el *" + p.nombre + "* por *" + fmt(p.precio) + "*.\n¿Está disponible?";
+        if (p.precio > 0) {
+            return "Hola 👋 Quiero comprar el *" + p.nombre + "* por *" + fmt(p.precio) + "*.\n¿Está disponible?";
+        }
+        return "Hola 👋 Quiero cotizar el *" + p.nombre + "*.\n¿Me envías el precio?";
     }
 
     /* ===== CATÁLOGO (Supabase con fallback a data/productos.json) ===== */
@@ -154,34 +158,26 @@ console.log("ELROJO STUDIO iniciado correctamente.");
 
                         sb.from("configuracion")
                             .select("clave,valor")
-                            .eq("clave", "whatsapp")
-                            .maybeSingle()
                             .then((rcfg) => {
-                                if (!rcfg.error && rcfg.data && rcfg.data.valor) {
-                                    WHATSAPP = String(rcfg.data.valor).replace(/\D/g, "");
+                                if (rcfg.data) {
+                                    rcfg.data.forEach(fila => {
+                                        if (fila.clave === "whatsapp" && fila.valor) {
+                                            WHATSAPP = String(fila.valor).replace(/\D/g, "");
+                                        }
+                                        if (fila.clave === "mantenimiento") {
+                                            mantenimientoActivo = fila.valor === "1";
+                                        }
+                                    });
                                 }
                             })
-                            .catch(() => {});
+                            .catch(() => {})
+                            .then(() => aplicarMantenimiento());
                     });
                 }
                 throw new Error("sin supabase");
             })
-            .catch(() =>
-                fetch("data/productos.json").then(r => {
-                    if (!r.ok) throw new Error("HTTP " + r.status);
-                    return r.json();
-                }).then(data => {
-                    catalogo = data.productos || [];
-                    categorias = data.categorias || [];
-                })
-            )
             .then(() => {
                 categorias = categorias.filter(c => c.id !== "todos");
-            })
-            .catch(() => {
-                $("#cards-container").innerHTML =
-                    '<div class="cards-empty">No se pudo cargar el catálogo.<br>Revisa tu conexión o la configuración de Supabase.</div>';
-                throw new Error("catálogo no disponible");
             });
     }
 
@@ -196,13 +192,33 @@ console.log("ELROJO STUDIO iniciado correctamente.");
         });
     }
 
+    const MAX_PILLS = 10;
+
     function renderFiltros() {
         const cont = $("#filtro-categorias");
         if (!cont) return;
-        const todos = `<button class="filtro-btn ${filtroActual === "todos" ? "activo" : ""}" data-filtro="todos">Todos</button>`;
-        cont.innerHTML = todos + categorias.map(c =>
+        let html = `<button class="filtro-btn ${filtroActual === "todos" ? "activo" : ""}" data-filtro="todos">Todos</button>`;
+        html += categorias.slice(0, MAX_PILLS).map(c =>
             `<button class="filtro-btn ${filtroActual === c.id ? "activo" : ""}" data-filtro="${c.id}">${c.nombre}</button>`
         ).join("");
+        cont.innerHTML = html;
+
+        if (categorias.length > MAX_PILLS) {
+            const extra = categorias.slice(MAX_PILLS);
+            const sel = document.createElement("select");
+            sel.className = "filtro-mas";
+            sel.setAttribute("aria-label", "Más categorías");
+            sel.innerHTML = '<option value="">Más categorías ▾</option>' +
+                extra.map(c => `<option value="${c.id}">${c.nombre}</option>`).join("");
+            if (extra.some(c => c.id === filtroActual)) sel.value = filtroActual;
+            cont.appendChild(sel);
+        }
+
+        const selMobile = $("#filtro-select");
+        if (!selMobile) return;
+        selMobile.innerHTML = '<option value="todos">Todos</option>' +
+            categorias.map(c => `<option value="${c.id}">${c.nombre}</option>`).join("");
+        selMobile.value = filtroActual;
     }
 
     function renderTarjetas() {
@@ -225,7 +241,7 @@ console.log("ELROJO STUDIO iniciado correctamente.");
                 <div class="card-content">
                     <h3>${p.nombre}</h3>
                     <p>${p.descCorta || p.desc}</p>
-                    <div class="price">Desde ${fmt(p.precio)}</div>
+                    <div class="price">${p.precio > 0 ? "Desde " + fmt(p.precio) : "Cotizar"}</div>
                     <div class="card-buttons">
                         <button class="small-btn" data-action="more">Ver más</button>
                         <button class="small-btn red" data-action="buy">Comprar</button>
@@ -263,15 +279,61 @@ console.log("ELROJO STUDIO iniciado correctamente.");
 
         carruselViewport.scrollLeft = 0;
 
-        const mover = (dir) => carruselViewport.scrollBy({
-            left: dir * Math.max(carruselViewport.clientWidth * 0.85, 300),
-            behavior: "smooth"
-        });
+        const easeInOutCubic = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+        let animando = false;
+
+        function resaltarCentral() {
+            const cards = carruselViewport.querySelectorAll(".card");
+            const centro = carruselViewport.scrollLeft + carruselViewport.clientWidth / 2;
+            let mejor = cards[0];
+            cards.forEach(c => {
+                const medio = c.offsetLeft + c.offsetWidth / 2;
+                if (Math.abs(medio - centro) < Math.abs((mejor.offsetLeft + mejor.offsetWidth / 2) - centro)) mejor = c;
+            });
+            cards.forEach(c => c.classList.toggle("centro", c === mejor));
+        }
+
+        function mover(dir) {
+            if (animando) return;
+            const cards = carruselViewport.querySelectorAll(".card");
+            if (!cards.length) return;
+            let objetivo;
+            if (dir > 0) {
+                objetivo = [...cards].find(c => c.offsetLeft > carruselViewport.scrollLeft + 10) || cards[cards.length - 1];
+            } else {
+                const anteriores = [...cards].filter(c => c.offsetLeft < carruselViewport.scrollLeft - 10);
+                objetivo = anteriores.length ? anteriores[anteriores.length - 1] : cards[0];
+            }
+
+            const inicioX = carruselViewport.scrollLeft;
+            const destinoX = Math.max(0, objetivo.offsetLeft);
+            const delta = destinoX - inicioX;
+            if (Math.abs(delta) < 2) return;
+
+            animando = true;
+            const duracion = 1100;
+            const t0 = performance.now();
+
+            function paso(ahora) {
+                const t = Math.min((ahora - t0) / duracion, 1);
+                carruselViewport.scrollLeft = inicioX + delta * easeInOutCubic(t);
+                if (t < 1) {
+                    requestAnimationFrame(paso);
+                } else {
+                    animando = false;
+                    actualizarBotonesCarrusel();
+                    resaltarCentral();
+                }
+            }
+            requestAnimationFrame(paso);
+        }
 
         prev.onclick = () => mover(-1);
         next.onclick = () => mover(1);
-        carruselViewport.onscroll = actualizarBotonesCarrusel;
+        carruselViewport.onscroll = () => { actualizarBotonesCarrusel(); resaltarCentral(); };
         actualizarBotonesCarrusel();
+        resaltarCentral();
     }
 
     document.addEventListener("click", (e) => {
@@ -285,6 +347,21 @@ console.log("ELROJO STUDIO iniciado correctamente.");
     $("#buscar").addEventListener("input", (e) => {
         textoBusqueda = e.target.value.trim();
         renderTarjetas();
+    });
+
+    $("#filtro-select").addEventListener("change", (e) => {
+        filtroActual = e.target.value;
+        renderFiltros();
+        renderTarjetas();
+    });
+
+    document.addEventListener("change", (e) => {
+        const t = e.target;
+        if (t && t.className === "filtro-mas" && t.value) {
+            filtroActual = t.value;
+            renderFiltros();
+            renderTarjetas();
+        }
     });
 
     function llenarPersonalizador() {
@@ -347,7 +424,7 @@ console.log("ELROJO STUDIO iniciado correctamente.");
         modalTitle.textContent = p.nombre;
         modalDesc.textContent = p.desc;
         modalFeats.innerHTML = (p.feats || []).map(f => `<li>${f}</li>`).join("");
-        modalPrice.textContent = fmt(p.precio);
+        modalPrice.textContent = p.precio > 0 ? fmt(p.precio) : "Cotizar";
         modal.dataset.product = id;
         modal.classList.add("open");
         document.body.style.overflow = "hidden";
@@ -459,20 +536,80 @@ console.log("ELROJO STUDIO iniciado correctamente.");
         });
     }
 
+    /* ===== MANTENIMIENTO ===== */
+    const TEXTO_MANTENIMIENTO = "Estamos en mantenimiento. Estamos calibrando la impresora para traerte el catálogo al 100%. Vuelve en unos minutos.";
+
+    function aplicarMantenimiento() {
+        const b = $("#banner-mantenimiento");
+        const wrap = document.querySelector(".carousel-wrap");
+        const filtros = document.querySelector(".filtros");
+        const nav = document.querySelector("#home-content nav");
+        const botones = document.querySelector(".hero .buttons");
+        const secciones = ["#productos", "#personalizar", "#testimonios"];
+
+        if (mantenimientoActivo) {
+            if (b) { b.textContent = TEXTO_MANTENIMIENTO; b.hidden = false; }
+            if (wrap) wrap.hidden = true;
+            if (filtros) filtros.hidden = true;
+            if (nav) nav.hidden = true;
+            if (botones) botones.hidden = true;
+            secciones.forEach(s => { const el = document.querySelector(s); if (el) el.hidden = true; });
+            ocultarErrorCatalogo();
+        } else {
+            if (b) b.hidden = true;
+            if (wrap) wrap.hidden = false;
+            if (filtros) filtros.hidden = false;
+            if (nav) nav.hidden = false;
+            if (botones) botones.hidden = false;
+            secciones.forEach(s => { const el = document.querySelector(s); if (el) el.hidden = false; });
+        }
+    }
+
+    /* ===== ERROR DE CATÁLOGO ===== */
+    function mostrarErrorCatalogo() {
+        const wrap = document.querySelector(".carousel-wrap");
+        const err = $("#catalog-error");
+        if (wrap) wrap.hidden = true;
+        if (err) err.hidden = false;
+    }
+
+    function ocultarErrorCatalogo() {
+        const wrap = document.querySelector(".carousel-wrap");
+        const err = $("#catalog-error");
+        if (wrap) wrap.hidden = false;
+        if (err) err.hidden = true;
+    }
+
+    function reintentar() {
+        ocultarErrorCatalogo();
+        cargarCatalogo()
+            .then(() => {
+                aplicarMantenimiento();
+                renderFiltros();
+                renderTarjetas();
+            })
+            .catch(() => mostrarErrorCatalogo());
+    }
+
     /* ===== init ===== */
     (async function init() {
         observarReveal();
 
-        await cargarCatalogo();
+        $("#btn-reintentar").addEventListener("click", reintentar);
 
-        renderFiltros();
-        renderTarjetas();
-        llenarPersonalizador();
-
-        window.addEventListener("resize", actualizarBotonesCarrusel);
-
-        actualizarPreview();
-        actualizarPrecio();
+        try {
+            await cargarCatalogo();
+            aplicarMantenimiento();
+            renderFiltros();
+            renderTarjetas();
+            llenarPersonalizador();
+            window.addEventListener("resize", actualizarBotonesCarrusel);
+            actualizarPreview();
+            actualizarPrecio();
+        } catch (e) {
+            aplicarMantenimiento();
+            mostrarErrorCatalogo();
+        }
     })();
 
 })();
