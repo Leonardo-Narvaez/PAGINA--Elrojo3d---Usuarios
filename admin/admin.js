@@ -71,11 +71,7 @@ console.log("PANEL ELROJO 3D iniciado.");
     function refrescarVista() {
         ocultarTodo();
         if (sesion) {
-            $("#vista-dash").hidden = false;
-            cargarCategorias();
-            cargarProductos();
-            cargarColores();
-            cargarConfiguracion();
+            mostrarHome();
         } else {
             $("#vista-login").hidden = false;
         }
@@ -84,6 +80,52 @@ console.log("PANEL ELROJO 3D iniciado.");
     function ocultarTodo() {
         $$(".vista").forEach(v => v.hidden = true);
     }
+
+    /* ===== NAVEGACIÓN: home + secciones ===== */
+    const cargadores = {
+        productos: cargarProductos,
+        categorias: cargarCategorias,
+        colores: cargarColores,
+        ajustes: cargarConfiguracion
+    };
+
+    function irVista(nombre) {
+        ocultarTodo();
+        $("#vista-" + nombre).hidden = false;
+        window.scrollTo(0, 0);
+        if (nombre === "home") cargarHome();
+        else if (cargadores[nombre]) cargadores[nombre]();
+    }
+
+    function mostrarHome() {
+        irVista("home");
+    }
+
+    async function cargarHome() {
+        const [p, c, co, wa] = await Promise.all([
+            sb.from("productos").select("id", { count: "exact", head: true }),
+            sb.from("categorias").select("id", { count: "exact", head: true }),
+            sb.from("colores").select("id", { count: "exact", head: true }),
+            sb.from("configuracion").select("valor").eq("clave", "whatsapp").maybeSingle()
+        ]);
+        $("#cnt-productos").textContent = p.count ?? 0;
+        $("#cnt-categorias").textContent = c.count ?? 0;
+        $("#cnt-colores").textContent = co.count ?? 0;
+
+        const est = $("#home-wa-estado");
+        if (est) {
+            const val = wa && wa.data ? wa.data.valor : "";
+            const on = /^\d{10,15}$/.test(val || "");
+            est.textContent = on ? "● WhatsApp configurado" : "● WhatsApp no configurado";
+            est.className = "home-status " + (on ? "on" : "off");
+        }
+    }
+
+    document.addEventListener("click", (e) => {
+        const nav = e.target.closest("[data-nav]");
+        if (!nav) return;
+        irVista(nav.dataset.nav);
+    });
 
     /* ===== SESIÓN: una sola activa + cierre por inactividad ===== */
     const SESSION_KEY = "elrojo3d_sesion_token";
@@ -194,15 +236,25 @@ console.log("PANEL ELROJO 3D iniciado.");
     /* ===== CATEGORÍAS ===== */
     async function cargarCategorias() {
         const { data } = await sb.from("categorias").select("*").order("orden");
-        const sel = $("#p-categoria");
-        sel.innerHTML = (data || []).map(c => `<option value="${c.id}">${c.nombre}</option>`).join("");
+        const cats = data || [];
 
-        $("#lista-categorias").innerHTML = (data || []).map(c => `
-            <li class="chip">
-                ${c.nombre}
+        const { data: prods } = await sb.from("productos").select("categoria");
+        const uso = {};
+        (prods || []).forEach(p => { if (p.categoria) uso[p.categoria] = (uso[p.categoria] || 0) + 1; });
+
+        const cnt = $("#cnt-categorias-seccion");
+        if (cnt) cnt.textContent = cats.length;
+
+        const sel = $("#p-categoria");
+        sel.innerHTML = cats.map(c => `<option value="${c.id}">${c.nombre}</option>`).join("");
+
+        $("#lista-categorias").innerHTML = cats.length ? cats.map(c => `
+            <li class="mini-item">
+                <span class="mini-main">${c.nombre}</span>
+                <span class="mini-meta">${uso[c.id] || 0} productos</span>
                 <button type="button" data-del-cat="${c.id}" title="Eliminar">✕</button>
             </li>
-        `).join("") || '<li class="chip">Sin categorías</li>';
+        `).join("") : '<li class="vacio mini-vacio">Sin categorías</li>';
     }
 
     $("#form-categoria").addEventListener("submit", async (e) => {
@@ -230,13 +282,19 @@ console.log("PANEL ELROJO 3D iniciado.");
     /* ===== COLORES ===== */
     async function cargarColores() {
         const { data } = await sb.from("colores").select("*").order("orden");
-        $("#lista-colores").innerHTML = (data || []).map(c => `
-            <li class="chip">
+        const cols = data || [];
+
+        const cnt = $("#cnt-colores-seccion");
+        if (cnt) cnt.textContent = cols.length;
+
+        $("#lista-colores").innerHTML = cols.length ? cols.map(c => `
+            <li class="mini-item">
                 <span class="swatch" style="background:${c.hex}"></span>
-                ${c.nombre}
+                <span class="mini-main">${c.nombre}</span>
+                <span class="mini-meta">${c.hex}</span>
                 <button type="button" data-del-color="${c.id}" title="Eliminar">✕</button>
             </li>
-        `).join("") || '<li class="chip">Sin colores</li>';
+        `).join("") : '<li class="vacio mini-vacio">Sin colores</li>';
     }
 
     $("#form-color").addEventListener("submit", async (e) => {
@@ -279,12 +337,30 @@ console.log("PANEL ELROJO 3D iniciado.");
         }
     }
 
+    function pintarWhatsApp() {
+        const valor = $("#cfg-whatsapp").value.trim();
+        const badge = $("#cfg-whatsapp-estado");
+        if (!badge) return;
+        const on = /^\d{10,15}$/.test(valor);
+        badge.textContent = on ? "Configurado" : "No configurado";
+        badge.className = "estado-badge " + (on ? "on" : "off");
+    }
+
+    document.addEventListener("click", (e) => {
+        const btn = e.target.closest("#btn-toggle-wa");
+        if (!btn) return;
+        const inp = $("#cfg-whatsapp");
+        inp.type = inp.type === "password" ? "tel" : "password";
+        btn.textContent = inp.type === "password" ? "👁" : "🙈";
+    });
+
     async function cargarConfiguracion() {
         const { data, error } = await sb.from("configuracion")
             .select("clave,valor")
             .eq("clave", "whatsapp")
             .maybeSingle();
-        if (!error && data) $("#cfg-whatsapp").value = data.valor;
+        if (!error) $("#cfg-whatsapp").value = data ? data.valor : "";
+        pintarWhatsApp();
 
         const { data: m, error: me } = await sb.from("configuracion")
             .select("clave,valor")
@@ -293,12 +369,15 @@ console.log("PANEL ELROJO 3D iniciado.");
         if (!me) pintarMantenimiento(m ? m.valor : "0");
     }
 
+    $("#cfg-whatsapp").addEventListener("input", pintarWhatsApp);
+
     $("#form-config").addEventListener("submit", async (e) => {
         e.preventDefault();
         const valor = $("#cfg-whatsapp").value.trim();
         const { error } = await sb.from("configuracion")
             .upsert({ clave: "whatsapp", valor }, { onConflict: "clave" });
         if (error) { toast("Error: " + error.message, false); return; }
+        pintarWhatsApp();
         toast("Número de WhatsApp guardado");
     });
 
@@ -321,14 +400,28 @@ console.log("PANEL ELROJO 3D iniciado.");
     });
 
     /* ===== PRODUCTOS ===== */
+    let productosCache = [];
+
     async function cargarProductos() {
         const { data } = await sb.from("productos")
             .select("*")
             .order("actualizado_en", { ascending: false });
+        productosCache = data || [];
+        renderProductos($("#buscador-productos") ? $("#buscador-productos").value : "");
+    }
 
+    function renderProductos(filtro = "") {
         const cont = $("#lista-productos");
-        if (!data || !data.length) {
-            cont.innerHTML = '<p class="vacio">Aún no hay productos. Crea el primero.</p>';
+        const q = filtro.trim().toLowerCase();
+        const lista = q
+            ? productosCache.filter(p => (p.nombre || "").toLowerCase().includes(q) || (p.slug || "").toLowerCase().includes(q))
+            : productosCache;
+
+        const cnt = $("#cnt-productos-seccion");
+        if (cnt) cnt.textContent = lista.length;
+
+        if (!lista.length) {
+            cont.innerHTML = `<div class="vacio">${productosCache.length ? "Sin resultados para \"" + filtro.trim() + "\"" : "Aún no hay productos. Crea el primero."}</div>`;
             return;
         }
 
@@ -338,18 +431,18 @@ console.log("PANEL ELROJO 3D iniciado.");
                     <tr><th></th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Estado</th><th></th></tr>
                 </thead>
                 <tbody>
-                    ${data.map(p => `
+                    ${lista.map(p => `
                         <tr data-id="${p.id}">
                             <td><img class="thumb" src="${p.img || "../images/products/placeholder.png"}" alt=""></td>
-                            <td><strong>${p.nombre}</strong><br><small style="color:#888">/${p.slug}</small></td>
-                            <td>${p.categoria || "-"}</td>
+                            <td><strong>${p.nombre}</strong><br><small class="slug">/${p.slug}</small></td>
+                            <td><span class="tag">${p.categoria || "-"}</span></td>
                             <td>$${Number(p.precio).toLocaleString("es-CO")}</td>
                             <td><span class="badge ${p.disponible ? "on" : "off"}">${p.disponible ? "Activo" : "Oculto"}</span></td>
                             <td>
                                 <div class="fila-acciones">
-                                    <button class="mini-btn toggle" data-toggle="${p.id}">${p.disponible ? "Ocultar" : "Mostrar"}</button>
-                                    <button class="mini-btn edit" data-edit="${p.id}">Editar</button>
-                                    <button class="mini-btn del" data-del="${p.id}">Eliminar</button>
+                                    <button class="mini-btn toggle" data-toggle="${p.id}" title="${p.disponible ? "Ocultar" : "Mostrar"}">${p.disponible ? "👁 Ocultar" : "👁 Mostrar"}</button>
+                                    <button class="mini-btn edit" data-edit="${p.id}" title="Editar">✏️ Editar</button>
+                                    <button class="mini-btn del" data-del="${p.id}" title="Eliminar">🗑 Eliminar</button>
                                 </div>
                             </td>
                         </tr>
@@ -358,6 +451,8 @@ console.log("PANEL ELROJO 3D iniciado.");
             </table>
         `;
     }
+
+    $("#buscador-productos").addEventListener("input", (e) => renderProductos(e.target.value));
 
     document.addEventListener("click", async (e) => {
         const toggle = e.target.closest("[data-toggle]");
@@ -494,12 +589,7 @@ console.log("PANEL ELROJO 3D iniciado.");
     });
 
     function mostrarDash() {
-        ocultarTodo();
-        $("#vista-dash").hidden = false;
-        cargarCategorias();
-        cargarProductos();
-        cargarColores();
-        cargarConfiguracion();
+        irVista("productos");
     }
 
     iniciar();

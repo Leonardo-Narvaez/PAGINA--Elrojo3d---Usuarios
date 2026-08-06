@@ -39,83 +39,160 @@
     </div>
 
 
-    <!-- ===== DASHBOARD ===== -->
-    <div id="vista-dash" class="vista" hidden>
+    <!-- ===== HOME (MENÚ) ===== -->
+    <div id="vista-home" class="vista" hidden>
 
         <header class="dash-head">
             <h2>Panel de administración</h2>
             <div class="dash-acciones">
-                <a href="../index.html" class="btn ghost">← Volver</a>
+                <a href="../index.html" class="btn ghost">← Ver página</a>
                 <button class="btn ghost" id="btn-salir">Cerrar sesión</button>
             </div>
         </header>
 
         <main class="dash-body">
 
+            <nav class="nav-grid">
+                <button type="button" class="nav-card" data-nav="productos">
+                    <span class="nav-icon">🛒</span>
+                    <div>
+                        <strong>Productos</strong>
+                        <small><b id="cnt-productos">–</b> en catálogo</small>
+                    </div>
+                </button>
+                <button type="button" class="nav-card" data-nav="categorias">
+                    <span class="nav-icon">🏷️</span>
+                    <div>
+                        <strong>Categorías</strong>
+                        <small><b id="cnt-categorias">–</b> registradas</small>
+                    </div>
+                </button>
+                <button type="button" class="nav-card" data-nav="colores">
+                    <span class="nav-icon">🎨</span>
+                    <div>
+                        <strong>Colores</strong>
+                        <small><b id="cnt-colores">–</b> disponibles</small>
+                    </div>
+                </button>
+                <button type="button" class="nav-card" data-nav="ajustes">
+                    <span class="nav-icon">⚙️</span>
+                    <div>
+                        <strong>Ajustes</strong>
+                        <small>WhatsApp y mantenimiento</small>
+                        <span id="home-wa-estado" class="home-status off">—</span>
+                    </div>
+                </button>
+            </nav>
+
+        </main>
+
+    </div>
+
+    <!-- ===== PRODUCTOS ===== -->
+    <div id="vista-productos" class="vista" hidden>
+
+        <header class="dash-head">
+            <h2>Productos</h2>
+            <div class="dash-acciones">
+                <button type="button" class="btn ghost" data-nav="home">← Volver</button>
+                <button type="button" class="btn primary" id="btn-nuevo-producto">+ Nuevo producto</button>
+            </div>
+        </header>
+
+        <main class="dash-body">
             <section class="card panel">
-
                 <div class="panel-head">
-                    <h3>Categorías</h3>
+                    <h3>Productos <span class="count" id="cnt-productos-seccion">0</span></h3>
+                    <input type="search" id="buscador-productos" class="buscar" placeholder="Buscar producto...">
                 </div>
+                <div id="lista-productos" class="tabla-wrap"></div>
+            </section>
+        </main>
 
+    </div>
+
+    <!-- ===== CATEGORÍAS ===== -->
+    <div id="vista-categorias" class="vista" hidden>
+
+        <header class="dash-head">
+            <h2>Categorías</h2>
+            <div class="dash-acciones">
+                <button type="button" class="btn ghost" data-nav="home">← Volver</button>
+            </div>
+        </header>
+
+        <main class="dash-body">
+            <section class="card panel">
+                <div class="panel-head">
+                    <h3>Categorías <span class="count" id="cnt-categorias-seccion">0</span></h3>
+                </div>
                 <form id="form-categoria" class="row">
                     <input type="text" id="cat-nombre" placeholder="Nombre (ej. Accesorios)" required>
-                    <button type="submit" class="btn primary">Agregar</button>
+                    <button type="submit" class="btn primary">+ Agregar</button>
                 </form>
-
-                <ul id="lista-categorias" class="chips"></ul>
-
+                <ul id="lista-categorias" class="mini-grid"></ul>
             </section>
+        </main>
 
+    </div>
+
+    <!-- ===== COLORES ===== -->
+    <div id="vista-colores" class="vista" hidden>
+
+        <header class="dash-head">
+            <h2>Colores</h2>
+            <div class="dash-acciones">
+                <button type="button" class="btn ghost" data-nav="home">← Volver</button>
+            </div>
+        </header>
+
+        <main class="dash-body">
             <section class="card panel">
-
                 <div class="panel-head">
-                    <h3>Productos</h3>
-                    <button class="btn primary" id="btn-nuevo-producto">+ Nuevo producto</button>
+                    <h3>Colores <span class="count" id="cnt-colores-seccion">0</span></h3>
                 </div>
-
-                <div id="lista-productos" class="tabla-wrap"></div>
-
-            </section>
-
-            <section class="card panel">
-
-                <div class="panel-head">
-                    <h3>Colores</h3>
-                </div>
-
                 <form id="form-color" class="row">
                     <input type="text" id="color-nombre" placeholder="Nombre (ej. Verde)" required>
                     <input type="color" id="color-hex" value="#ff3131" title="Elegir color">
-                    <button type="submit" class="btn primary">Agregar</button>
+                    <button type="submit" class="btn primary">+ Agregar</button>
                 </form>
-
-                <ul id="lista-colores" class="chips"></ul>
-
+                <ul id="lista-colores" class="mini-grid"></ul>
                 <p class="hint">Los colores disponibles aparecen en el personalizador (color principal y color del texto).</p>
-
             </section>
+        </main>
+
+    </div>
+
+    <!-- ===== AJUSTES ===== -->
+    <div id="vista-ajustes" class="vista" hidden>
+
+        <header class="dash-head">
+            <h2>Ajustes</h2>
+            <div class="dash-acciones">
+                <button type="button" class="btn ghost" data-nav="home">← Volver</button>
+            </div>
+        </header>
+
+        <main class="dash-body">
 
             <section class="card panel">
-
                 <div class="panel-head">
-                    <h3>WhatsApp</h3>
+                    <h3>WhatsApp
+                        <span id="cfg-whatsapp-estado" class="estado-badge off">—</span>
+                    </h3>
                 </div>
-
-                <form id="form-config" class="row">
-                    <input type="tel" id="cfg-whatsapp" placeholder="573001234567">
+                <form id="form-config" class="row wa-row">
+                    <div class="wa-field">
+                        <input type="password" id="cfg-whatsapp" placeholder="573001234567" autocomplete="off">
+                        <button type="button" id="btn-toggle-wa" class="eye" title="Mostrar u ocultar el número">👁</button>
+                    </div>
                     <button type="submit" class="btn primary">Guardar</button>
                 </form>
                 <p class="hint">Número en formato internacional, sin "+". Las ventas "Comprar" y las cotizaciones llegan aquí por WhatsApp.</p>
-
             </section>
 
             <section class="card panel">
-
-                <div class="panel-head">
-                    <h3>Mantenimiento de productos</h3>
-                </div>
-
+                <div class="panel-head"><h3>Mantenimiento</h3></div>
                 <div class="mant-row">
                     <label class="switch" title="Activar o desactivar el modo mantenimiento">
                         <input type="checkbox" id="cfg-mantenimiento">
@@ -126,9 +203,7 @@
                         <span class="mant-texto" id="mant-texto">El catálogo está visible para los clientes.</span>
                     </div>
                 </div>
-
-                <p class="hint">Al activarlo, la página oculta el catálogo y muestra el aviso de mantenimiento mientras actualizas tus productos. Los clientes no podrán ver ni comprar nada hasta que lo desactives.</p>
-
+                <p class="hint">Al activarlo, la página oculta el catálogo y muestra el aviso de mantenimiento mientras actualizas tus productos.</p>
             </section>
 
         </main>
