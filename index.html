@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="@Elrojo.3d — Impresión 3D personalizada en Barranquilla. Placas, llaveros y accesorios para tu moto, hechos a tu medida y enviados a todo Colombia.">
+<meta name="theme-color" content="#ff3131">
+<link rel="icon" type="image/svg+xml" href="images/logo/logo.svg">
+
+<!-- Tarjeta de compartir (WhatsApp / Instagram / Facebook) -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CO">
+<meta property="og:site_name" content="@Elrojo.3d">
+<meta property="og:title" content="@Elrojo.3d | Impresión 3D personalizada">
+<meta property="og:description" content="Placas, llaveros y accesorios para tu moto, impresos en 3D a tu medida. Pide tu cotización por WhatsApp.">
+<meta property="og:image" content="https://TU-DOMINIO.com/images/og-image.png">
+<meta property="og:url" content="https://TU-DOMINIO.com/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="@Elrojo.3d | Impresión 3D personalizada">
+<meta name="twitter:description" content="Placas, llaveros y accesorios para tu moto, impresos en 3D a tu medida.">
+<meta name="twitter:image" content="https://TU-DOMINIO.com/images/og-image.png">
+<!-- Importante: cuando publiques la página, cambia TU-DOMINIO.com por la URL real -->
+
+<link rel="stylesheet" href="css/interactivo.css">
+<link rel="stylesheet" href="css/main.css">
+
+<title>@Elrojo.3d</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+<div id="home-content">
+
+<div id="banner-mantenimiento" class="banner-mantenimiento" hidden></div>
+
+<div class="container">
+
+<header>
+
+<div class="logo" id="header-logo">
+<img src="images/logo/logo.svg" alt="Logo">
+</div>
+
+<nav>
+
+<a href="#inicio" class="active">Inicio</a>
+<a href="#productos">Productos</a>
+<a href="#personalizar">Personalizar</a>
+<a href="#testimonios">Opiniones</a>
+
+</nav>
+
+</header>
+
+</div>
+
+
+
+<section class="hero" id="inicio">
+
+<img src="images/hero/hero-bg.svg" alt="" class="hero-bg">
+
+<div class="container">
+
+<h1>
+Diseñado.<br>
+<span>Impreso capa por capa.</span>
+</h1>
+
+<p>
+
+Accesorios impresos en 3D para motociclistas y amantes de los productos personalizados.
+
+</p>
+
+<div class="buttons">
+
+<button class="btn primary" data-scroll="#productos">Ver Catálogo</button>
+<button class="btn secondary" data-scroll="#personalizar">Personalizar Producto</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<section class="section" id="productos">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Nuestros Productos
+
+</h2>
+
+<div class="filtros">
+
+<select id="filtro-select" class="filtro-select" aria-label="Filtrar por categoría"></select>
+
+<div class="filtro-categorias" id="filtro-categorias"></div>
+
+<input type="search" id="buscar" class="buscar" placeholder="Buscar producto...">
+
+</div>
+
+<div class="carousel-wrap">
+
+<button type="button" class="carousel-btn prev" data-carousel="prev" aria-label="Productos anteriores">‹</button>
+
+<div class="cards carousel-viewport" id="cards-container"></div>
+
+<button type="button" class="carousel-btn next" data-carousel="next" aria-label="Productos siguientes">›</button>
+
+</div>
+
+<div id="catalog-error" class="catalog-error" hidden>
+
+<div class="catalog-error-icon">⚠</div>
+<h3>No pudimos cargar los productos</h3>
+<p>Parece que hay problemas de conexión con nuestra base de datos. Es temporal; intenta de nuevo en un momento.</p>
+<button type="button" class="btn primary" id="btn-reintentar">Reintentar</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<section class="section" id="personalizar">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Personaliza tu producto
+
+</h2>
+
+<div class="personalizador">
+
+<div class="preview">
+
+<img src="images/products/llaveros.png" alt="Vista previa" id="preview-img">
+
+</div>
+
+<div class="formulario">
+
+<div>
+
+<label>Producto</label>
+<select id="op-producto"></select>
+
+</div>
+
+<div id="campos-personalizador"></div>
+
+<p id="personalizador-vacio" class="personalizador-vacio" hidden>
+Aún no hay productos listos para personalizar. Vuelve pronto.
+</p>
+
+<div>
+
+<h2 style="color:#ff3131;">
+Precio estimado: <span id="precio-estimado">$28.000</span>
+</h2>
+
+</div>
+
+<button class="btn primary" id="btn-cotizar">
+
+Solicitar Cotización
+
+</button>
+
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+
+<section class="section" id="testimonios">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Lo que dicen nuestros clientes
+
+</h2>
+
+<div class="testimonios-grid">
+
+<article class="testimonio">
+
+<div class="avatar">J</div>
+<div class="stars">★★★★★</div>
+<p>"Pedí una placa personalizada para mi moto y quedó espectacular. El acabado es de primera y llegó antes de lo esperado."</p>
+<div class="autor">Javier M.</div>
+<div class="detalle">Barranquilla • Placa personalizada</div>
+
+</article>
+
+<article class="testimonio">
+
+<div class="avatar">L</div>
+<div class="stars">★★★★★</div>
+<p>"Los llaveros con mi nombre quedaron increíbles. Detalle perfecto para regalar y muy buena calidad."</p>
+<div class="autor">Laura C.</div>
+<div class="detalle">Bogotá • Llaveros personalizados</div>
+
+</article>
+
+<article class="testimonio">
+
+<div class="avatar">A</div>
+<div class="stars">★★★★★</div>
+<p>"Muy buena atención, me ayudaron con el diseño y el resultado superó lo que esperaba. Recomendado 100%."</p>
+<div class="autor">Andrés R.</div>
+<div class="detalle">Medellín • Soporte para casco</div>
+
+</article>
+
+</div>
+
+</div>
+
+</section>
+
+<footer>
+
+<div id="footer-logo" style="margin-bottom:20px;">
+<img src="images/logo/logo.svg" alt="Logo">
+</div>
+
+<p>
+
+Barranquilla - Colombia.
+
+</p>
+
+<p style="margin-top:10px;">
+Cada producto es fabricado especialmente para ti.
+</p>
+
+<p style="margin-top:24px;">
+<a href="admin/admin.html" class="admin-link">Panel de administración</a>
+</p>
+
+</footer>
+
+</div>
+
+
+<!-- MODAL PRODUCTO -->
+<div id="modal" class="modal">
+    <div class="modal-card">
+        <button class="modal-close" id="modal-close" aria-label="Cerrar">✕</button>
+        <div class="modal-imgs">
+            <button class="modal-gallery-btn prev" id="modal-prev" aria-label="Foto anterior">‹</button>
+            <img src="" alt="" id="modal-img" class="modal-img">
+            <button class="modal-gallery-btn next" id="modal-next" aria-label="Foto siguiente">›</button>
+            <div id="modal-dots" class="modal-dots"></div>
+        </div>
+        <div class="modal-body">
+            <h3 id="modal-title"></h3>
+            <p id="modal-desc"></p>
+            <ul id="modal-feats" class="modal-feats"></ul>
+            <div class="modal-foot">
+                <div class="price" id="modal-price"></div>
+                <button class="btn primary" id="modal-buy">Comprar por WhatsApp</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>

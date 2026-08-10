@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin @Elrojo.3d</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+    <!-- ===== LOGIN ===== -->
+    <div id="vista-login" class="vista" hidden>
+
+        <div class="card auth-card">
+
+            <img src="../images/logo/logo.svg" alt="@Elrojo.3d" class="auth-logo">
+
+            <h1>@Elrojo.3d</h1>
+            <p class="sub">Panel de administración</p>
+
+            <div id="login-error" class="error" hidden></div>
+
+            <form id="form-login">
+                <label>Correo</label>
+                <input type="email" id="login-email" required placeholder="usuario@dominio.com">
+                <label>Contraseña</label>
+                <input type="password" id="login-pass" required placeholder="••••••••">
+                <button type="submit" class="btn primary">Entrar</button>
+            </form>
+
+            <p class="toggle-auth">
+                <a href="../index.html" class="link">← Volver a la página</a>
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===== HOME (MENÚ) ===== -->
+    <div id="vista-home" class="vista" hidden>
+
+        <header class="dash-head">
+            <h2>Panel de administración</h2>
+            <div class="dash-acciones">
+                <a href="../index.html" class="btn ghost">← Ver página</a>
+                <button class="btn ghost" id="btn-salir">Cerrar sesión</button>
+            </div>
+        </header>
+
+        <main class="dash-body">
+
+            <nav class="nav-grid">
+                <button type="button" class="nav-card" data-nav="productos">
+                    <span class="nav-icon">🛒</span>
+                    <div>
+                        <strong>Productos</strong>
+                        <small><b id="cnt-productos">–</b> en catálogo</small>
+                    </div>
+                </button>
+                <button type="button" class="nav-card" data-nav="categorias">
+                    <span class="nav-icon">🏷️</span>
+                    <div>
+                        <strong>Categorías</strong>
+                        <small><b id="cnt-categorias">–</b> registradas</small>
+                    </div>
+                </button>
+                <button type="button" class="nav-card" data-nav="colores">
+                    <span class="nav-icon">🎨</span>
+                    <div>
+                        <strong>Colores</strong>
+                        <small><b id="cnt-colores">–</b> disponibles</small>
+                    </div>
+                </button>
+                <button type="button" class="nav-card" data-nav="campos">
+                    <span class="nav-icon">🧩</span>
+                    <div>
+                        <strong>Campos</strong>
+                        <small><b id="cnt-campos">–</b> para personalizar</small>
+                    </div>
+                </button>
+                <button type="button" class="nav-card" data-nav="ajustes">
+                    <span class="nav-icon">⚙️</span>
+                    <div>
+                        <strong>Ajustes</strong>
+                        <small>WhatsApp y mantenimiento</small>
+                        <span id="home-wa-estado" class="home-status off">—</span>
+                    </div>
+                </button>
+            </nav>
+
+        </main>
+
+    </div>
+
+    <!-- ===== PRODUCTOS ===== -->
+    <div id="vista-productos" class="vista" hidden>
+
+        <header class="dash-head">
+            <h2>Productos</h2>
+            <div class="dash-acciones">
+                <button type="button" class="btn ghost" data-nav="home">← Volver</button>
+                <button type="button" class="btn primary" id="btn-nuevo-producto">+ Nuevo producto</button>
+            </div>
+        </header>
+
+        <main class="dash-body">
+            <section class="card panel">
+                <div class="panel-head">
+                    <h3>Productos <span class="count" id="cnt-productos-seccion">0</span></h3>
+                    <input type="search" id="buscador-productos" class="buscar" placeholder="Buscar producto...">
+                </div>
+                <div id="lista-productos" class="tabla-wrap"></div>
+            </section>
+        </main>
+
+    </div>
+
+    <!-- ===== CATEGORÍAS ===== -->
+    <div id="vista-categorias" class="vista" hidden>
+
+        <header class="dash-head">
+            <h2>Categorías</h2>
+            <div class="dash-acciones">
+                <button type="button" class="btn ghost" data-nav="home">← Volver</button>
+            </div>
+        </header>
+
+        <main class="dash-body">
+            <section class="card panel">
+                <div class="panel-head">
+                    <h3>Categorías <span class="count" id="cnt-categorias-seccion">0</span></h3>
+                </div>
+                <form id="form-categoria" class="row">
+                    <input type="text" id="cat-nombre" placeholder="Nombre (ej. Accesorios)" required>
+                    <button type="submit" class="btn primary">+ Agregar</button>
+                </form>
+                <ul id="lista-categorias" class="mini-grid"></ul>
+            </section>
+        </main>
+
+    </div>
+
+    <!-- ===== COLORES ===== -->
+    <div id="vista-colores" class="vista" hidden>
+
+        <header class="dash-head">
+            <h2>Colores</h2>
+            <div class="dash-acciones">
+                <button type="button" class="btn ghost" data-nav="home">← Volver</button>
+            </div>
+        </header>
+
+        <main class="dash-body">
+            <section class="card panel">
+                <div class="panel-head">
+                    <h3>Colores <span class="count" id="cnt-colores-seccion">0</span></h3>
+                </div>
+                <form id="form-color" class="row">
+                    <input type="text" id="color-nombre" placeholder="Nombre (ej. Verde)" required>
+                    <input type="color" id="color-hex" value="#ff3131" title="Elegir color">
+                    <button type="submit" class="btn primary">+ Agregar</button>
+                </form>
+                <ul id="lista-colores" class="mini-grid"></ul>
+                <p class="hint">Los colores disponibles aparecen en el personalizador (color principal y color del texto).</p>
+            </section>
+        </main>
+
+    </div>
+
+    <!-- ===== CAMPOS ===== -->
+    <div id="vista-campos" class="vista" hidden>
+
+        <header class="dash-head">
+            <h2>Campos de personalización</h2>
+            <div class="dash-acciones">
+                <button type="button" class="btn ghost" data-nav="home">← Volver</button>
+            </div>
+        </header>
+
+        <main class="dash-body">
+            <section class="card panel">
+                <div class="panel-head">
+                    <h3>Campos <span class="count" id="cnt-campos-seccion">0</span></h3>
+                </div>
+                <form id="form-campo" class="card-form">
+                    <div class="fila-campos">
+                        <div class="campo-grupo grow">
+                            <label for="campo-nombre">Nombre</label>
+                            <input type="text" id="campo-nombre" placeholder="Ej. Texto personalizado" required>
+                        </div>
+                        <div class="campo-grupo tipo">
+                            <label for="campo-tipo">Tipo</label>
+                            <select id="campo-tipo">
+                                <option value="texto">Texto</option>
+                                <option value="color">Color</option>
+                                <option value="opciones">Opciones</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="campo-grupo" data-rel="opciones" hidden>
+                        <label for="campo-opciones">Opciones (separadas por coma)</label>
+                        <input type="text" id="campo-opciones" placeholder="Ej. Azul, Rojo, Negro">
+                    </div>
+                    <div class="campo-grupo" data-rel="texto" hidden>
+                        <label for="campo-maxlength">Máx. caracteres</label>
+                        <input type="number" id="campo-maxlength" min="0" placeholder="14">
+                    </div>
+                    <div class="campo-acciones">
+                        <button type="submit" class="btn primary" id="btn-guardar-campo">+ Agregar</button>
+                        <button type="button" class="btn ghost" id="btn-cancelar-campo" hidden>Cancelar edición</button>
+                    </div>
+                </form>
+                <p class="hint" id="nota-campo-edicion" hidden></p>
+                <ul id="lista-campos" class="mini-grid"></ul>
+                <p class="hint">Estos campos se muestran en el personalizador solo si están marcados en el producto.</p>
+            </section>
+        </main>
+
+    </div>
+
+    <!-- ===== AJUSTES ===== -->
+    <div id="vista-ajustes" class="vista" hidden>
+
+        <header class="dash-head">
+            <h2>Ajustes</h2>
+            <div class="dash-acciones">
+                <button type="button" class="btn ghost" data-nav="home">← Volver</button>
+            </div>
+        </header>
+
+        <main class="dash-body">
+
+            <section class="card panel">
+                <div class="panel-head">
+                    <h3>WhatsApp
+                        <span id="cfg-whatsapp-estado" class="estado-badge off">—</span>
+                    </h3>
+                </div>
+                <form id="form-config" class="row wa-row">
+                    <div class="wa-field">
+                        <input type="password" id="cfg-whatsapp" placeholder="573001234567" autocomplete="off">
+                        <button type="button" id="btn-toggle-wa" class="eye" title="Mostrar u ocultar el número">👁</button>
+                    </div>
+                    <button type="submit" class="btn primary">Guardar</button>
+                </form>
+                <p class="hint">Número en formato internacional, sin "+". Las ventas "Comprar" y las cotizaciones llegan aquí por WhatsApp.</p>
+            </section>
+
+            <section class="card panel">
+                <div class="panel-head"><h3>Mantenimiento</h3></div>
+                <div class="mant-row">
+                    <label class="switch" title="Activar o desactivar el modo mantenimiento">
+                        <input type="checkbox" id="cfg-mantenimiento">
+                        <span class="slider"></span>
+                    </label>
+                    <div class="mant-info">
+                        <span class="mant-estado" id="mant-estado">Mantenimiento desactivado</span>
+                        <span class="mant-texto" id="mant-texto">El catálogo está visible para los clientes.</span>
+                    </div>
+                </div>
+                <p class="hint">Al activarlo, la página oculta el catálogo y muestra el aviso de mantenimiento mientras actualizas tus productos.</p>
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- ===== FORM PRODUCTO ===== -->
+    <div id="vista-form" class="vista" hidden>
+
+        <header class="dash-head">
+            <h2 id="form-titulo">Nuevo producto</h2>
+            <button class="btn ghost" id="btn-cancelar">Cancelar</button>
+        </header>
+
+        <main class="dash-body">
+
+            <form id="form-producto" class="card panel form-producto">
+
+                <div class="campo">
+                    <label>Nombre *</label>
+                    <input type="text" id="p-nombre" required>
+                </div>
+
+                <div class="campo">
+                    <label>Slug (id del producto) *</label>
+                    <input type="text" id="p-slug" required>
+                </div>
+
+                <div class="dos-col">
+                    <div class="campo">
+                        <label>Categoría</label>
+                        <select id="p-categoria"></select>
+                    </div>
+                    <div class="campo">
+                        <label>Precio (COP)</label>
+                        <input type="number" id="p-precio" min="0" step="100">
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label>Descripción corta (en la tarjeta)</label>
+                    <input type="text" id="p-desc-corta">
+                </div>
+
+                <div class="campo">
+                    <label>Descripción (en el modal)</label>
+                    <textarea id="p-desc" rows="3"></textarea>
+                </div>
+
+                <div class="campo">
+                    <label>Características (una por línea)</label>
+                    <textarea id="p-feats" rows="4" placeholder="PLA reforzado&#10;Colores personalizables"></textarea>
+                </div>
+
+                <div class="campo">
+                    <label>Imágenes <span class="label-hint">(máx. 5 — la principal se marca abajo)</span></label>
+                    <div class="img-upload">
+                        <input type="file" id="p-imagen" accept=".png,.jpg,.jpeg,.svg,image/png,image/jpeg,image/svg+xml" multiple>
+                    </div>
+                    <div id="galeria-imagenes" class="galeria-imagenes"></div>
+                    <p class="hint">Sube una o varias fotos. Con el botón "Principal" eliges cuál se muestra en la página y en la tarjeta; el resto se ven al pulsar "Ver más".</p>
+                </div>
+
+                <label class="check">
+                    <input type="checkbox" id="p-disponible" checked> Disponible en la página
+                </label>
+
+                <div class="campo">
+                    <label class="check">
+                        <input type="checkbox" id="p-personalizable"> Personalizable (aparece en el personalizador)
+                    </label>
+                    <div id="p-campos" class="checks-personalizacion"></div>
+                    <div id="p-campos-orden-wrap" hidden>
+                        <label class="orden-label">Orden de aparición</label>
+                        <div id="p-campos-orden" class="orden-campos"></div>
+                    </div>
+                    <p class="hint">Marca los campos que el cliente podrá personalizar. Con las flechas ▲▼ eliges el orden en que aparecen.</p>
+                </div>
+
+                <button type="submit" class="btn primary" id="btn-guardar">Guardar producto</button>
+
+            </form>
+
+        </main>
+
+    </div>
+
+
+    <div id="toast" class="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

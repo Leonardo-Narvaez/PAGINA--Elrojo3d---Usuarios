@@ -1,0 +1,10 @@
+{
+  "name": "elrojo3d-pagina",
+  "version": "1.0.0",
+  "description": "Página web @Elrojo.3d - catálogo de productos impresos en 3D",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "MIT"
+}

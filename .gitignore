@@ -1,0 +1,4 @@
+supabase/
+opencode.json
+node_modules/
+.env
