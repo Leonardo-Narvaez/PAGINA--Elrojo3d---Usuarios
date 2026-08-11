@@ -814,7 +814,7 @@ font-size:.85rem;
     gap:16px;
     padding:18px 0 14px;
   }
-  #header-logo img{ height:46px; }
+  #header-logo img{ height:80px; }
   nav{
     gap:20px;
     flex-wrap:wrap;
