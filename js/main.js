@@ -241,8 +241,8 @@ console.log("ELROJO STUDIO iniciado correctamente.");
             return;
         }
 
-        cont.innerHTML = list.map(p => `
-            <div class="card" data-product="${p.id}">
+        cont.innerHTML = list.map((p, i) => `
+            <div class="card" data-product="${p.id}" style="--d:${(i % 8) * 70}ms">
                 <div class="product-image">
                     <img src="${p.img || PLACEHOLDER}" alt="${p.nombre}" loading="lazy">
                 </div>
@@ -277,6 +277,32 @@ console.log("ELROJO STUDIO iniciado correctamente.");
         next.disabled = vp.scrollLeft >= max;
     }
 
+    function actualizarDotsCarrusel() {
+        const vp = carruselViewport;
+        const wrap = vp ? vp.closest(".carousel-wrap") : null;
+        const dotsWrap = wrap ? wrap.querySelector(".carousel-dots") : null;
+        if (!vp || !dotsWrap) return;
+        const cards = Array.from(vp.querySelectorAll(".card"));
+        if (!cards.length) {
+            dotsWrap.innerHTML = "";
+            return;
+        }
+        dotsWrap.classList.toggle("hidden-dots", cards.length > 24);
+        if (dotsWrap.children.length !== cards.length) {
+            dotsWrap.innerHTML = cards.map((_, i) =>
+                `<button type="button" class="carousel-dot" data-dot="${i}" aria-label="Producto ${i + 1}"></button>`
+            ).join("");
+        }
+        const centro = vp.scrollLeft + vp.clientWidth / 2;
+        let idx = 0, mejor = Infinity;
+        cards.forEach((c, i) => {
+            const medio = c.offsetLeft + c.offsetWidth / 2;
+            const d = Math.abs(medio - centro);
+            if (d < mejor) { mejor = d; idx = i; }
+        });
+        dotsWrap.querySelectorAll(".carousel-dot").forEach((b, i) => b.classList.toggle("activo", i === idx));
+    }
+
     function configurarCarrusel() {
         carruselViewport = $("#cards-container");
         const wrap = carruselViewport ? carruselViewport.closest(".carousel-wrap") : null;
@@ -290,6 +316,30 @@ console.log("ELROJO STUDIO iniciado correctamente.");
         const easeInOutCubic = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
         let animando = false;
+
+        /* --- móvil: indicador de progreso + pista "desliza" --- */
+        const dotsWrap = wrap.querySelector(".carousel-dots");
+        const hint = wrap.querySelector(".carousel-hint");
+        let hintOculto = false;
+
+        function ocultarHint() {
+            if (hint && !hintOculto) { hintOculto = true; hint.classList.add("oculto"); }
+        }
+
+        if (hint) setTimeout(ocultarHint, 5000);
+
+        if (dotsWrap && !dotsWrap.dataset.wired) {
+            dotsWrap.dataset.wired = "1";
+            dotsWrap.addEventListener("click", (e) => {
+                const b = e.target.closest("[data-dot]");
+                if (!b) return;
+                const card = carruselViewport.querySelectorAll(".card")[Number(b.dataset.dot)];
+                if (!card) return;
+                const destino = card.offsetLeft - (carruselViewport.clientWidth - card.offsetWidth) / 2;
+                carruselViewport.scrollTo({ left: Math.max(0, destino), behavior: "smooth" });
+                ocultarHint();
+            });
+        }
 
         function resaltarCentral() {
             const cards = carruselViewport.querySelectorAll(".card");
@@ -339,8 +389,15 @@ console.log("ELROJO STUDIO iniciado correctamente.");
 
         prev.onclick = () => mover(-1);
         next.onclick = () => mover(1);
-        carruselViewport.onscroll = () => { actualizarBotonesCarrusel(); resaltarCentral(); };
+        carruselViewport.onscroll = () => {
+            actualizarBotonesCarrusel();
+            resaltarCentral();
+            actualizarDotsCarrusel();
+            ocultarHint();
+        };
+        if (!carruselViewport.querySelectorAll(".card").length) ocultarHint();
         actualizarBotonesCarrusel();
+        actualizarDotsCarrusel();
         resaltarCentral();
     }
 
@@ -671,7 +728,7 @@ console.log("ELROJO STUDIO iniciado correctamente.");
     }, { passive: true });
 
     function observarReveal() {
-        $$(".section:not(.visible), .card:not(.visible)").forEach(el => {
+        $$(".section:not(.visible)").forEach(el => {
             if (enPantalla(el)) {
                 el.classList.add("visible");
             } else {
@@ -749,7 +806,7 @@ console.log("ELROJO STUDIO iniciado correctamente.");
             renderTarjetas();
             llenarPersonalizador();
             renderCamposPersonalizador();
-            window.addEventListener("resize", actualizarBotonesCarrusel);
+            window.addEventListener("resize", () => { actualizarBotonesCarrusel(); actualizarDotsCarrusel(); });
             actualizarPreview();
             actualizarPrecio();
         } catch (e) {
